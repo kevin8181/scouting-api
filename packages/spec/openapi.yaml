@@ -656,6 +656,31 @@ paths:
                   effectiveDt: "2010-01-01"
                   expiryDt: null
 
+  /lookups/advancements/unitTimezone:
+    get:
+      tags: [Lookups]
+      operationId: listUnitTimezones
+      summary: List unit time zones
+      description: >-
+        Returns the time zones a unit can be set to, as an array.
+      security: []
+      responses:
+        "200":
+          description: An array of every unit time zone
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitTimezone"
+              example:
+                - timezoneCode: Pacific/Honolulu
+                - timezoneCode: America/Anchorage
+                - timezoneCode: America/Los_Angeles
+                - timezoneCode: America/Denver
+                - timezoneCode: America/Chicago
+                - timezoneCode: America/New_York
+
   /lookups/advancements/unitTypes:
     get:
       tags: [Lookups]
@@ -1562,6 +1587,16 @@ components:
           examples: ["2010-01-01"]
         expiryDt:
           type: "null"
+
+    UnitTimezone:
+      type: object
+      additionalProperties: false
+      required: [timezoneCode]
+      properties:
+        timezoneCode:
+          type: string
+          description: IANA time zone name
+          examples: [America/Chicago]
 
     UnitType:
       type: object

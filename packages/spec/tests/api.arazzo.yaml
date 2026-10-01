@@ -173,6 +173,13 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
 
+  - workflowId: unit-timezones
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listUnitTimezones
+        successCriteria:
+          - condition: $statusCode == 200
+
   - workflowId: unit-types
     steps:
       - stepId: list
