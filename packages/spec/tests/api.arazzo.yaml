@@ -34,7 +34,7 @@ workflows:
         parameters:
           - name: meritBadgeId
             in: path
-            value: "3"
+            value: 3
         successCriteria:
           - condition: $statusCode == 200
       - stepId: requirements-not-found
@@ -42,7 +42,7 @@ workflows:
         parameters:
           - name: meritBadgeId
             in: path
-            value: "999999"
+            value: 999999
         successCriteria:
           - condition: $statusCode == 404
 
@@ -67,3 +67,27 @@ workflows:
             value: bogus
         successCriteria:
           - condition: $statusCode == 400
+      - stepId: requirements
+        operationId: $sourceDescriptions.api.getRankRequirements
+        parameters:
+          - name: rankId
+            in: path
+            value: 1
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: requirements-invalid
+        operationId: $sourceDescriptions.api.getRankRequirements
+        parameters:
+          - name: rankId
+            in: path
+            value: 0
+        successCriteria:
+          - condition: $statusCode == 400
+      - stepId: requirements-not-found
+        operationId: $sourceDescriptions.api.getRankRequirements
+        parameters:
+          - name: rankId
+            in: path
+            value: 999999
+        successCriteria:
+          - condition: $statusCode == 404

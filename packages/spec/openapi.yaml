@@ -273,6 +273,100 @@ paths:
         "400":
           $ref: "#/components/responses/InvalidQuery"
 
+  /advancements/ranks/{rankId}/requirements:
+    get:
+      tags: [Advancement]
+      operationId: getRankRequirements
+      summary: Get a rank's requirements
+      description: >-
+        Returns one requirements version of a rank: the newest by default, or
+        the one given by `versionId`. Requirements are a flat list; nest them
+        using `parentRequirementId`. Some old versions have no requirements.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/RankId"
+        - name: versionId
+          in: query
+          description: >-
+            A `versionId` of this rank from the rank list. Defaults to the
+            newest version.
+          schema:
+            type: integer
+            minimum: 1
+            examples: [38]
+      responses:
+        "200":
+          description: The requested requirements version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankRequirements"
+              example:
+                rankInformation:
+                  rankId: "19"
+                  name: Venturing
+                  version: "2020"
+                  short: Venturing
+                  reallyShort: Venturing
+                  level: "1"
+                  image: venturing.png
+                  programId: "4"
+                  searchKeywords: Venturer Rank Award Requirements
+                  lds: "False"
+                  sku: "620501"
+                  price: "2.99"
+                  priceLastUpdated: "2026-09-16"
+                  scoutNet: RV11
+                  header: ""
+                  footer: ""
+                  adminNotes: ""
+                  proofReadDate: ""
+                  active: "True"
+                  disabledOnQuickEntry: "False"
+                requirements:
+                  - id: "1246"
+                    versionId: "61"
+                    name: Participate in a crew activity outside of a crew meeting.
+                    short: ""
+                    listNumber: "1"
+                    requirementNumber: "1"
+                    sortOrder: "1"
+                    footer: ""
+                    childrenRequired: ""
+                    required: "True"
+                    parentRequirementId: ""
+                    videoExternalURLId: ""
+                    previousRankRequired: "False"
+                    monthsSinceLastRankRequired: ""
+                    eagleMBRequired: ""
+                    totalMBRequired: ""
+                    serviceHoursRequired: ""
+                    disabledOnQuickEntry: "False"
+                    linkedAdventureId: ""
+                    linkedAwardId: ""
+        "400":
+          description: "`rankId` or `versionId` is invalid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: C400
+                message: Bad Request
+                errorDesc: Invalid request - "rankId" must be larger than or equal to 1
+        "404":
+          description: >-
+            No rank exists with that ID, or `versionId` is not a version of this
+            rank
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: C404
+                message: Not Found
+                errorDesc: "Ranks information not found - rankId: 999999"
+
 components:
   schemas:
     MeritBadge:
@@ -642,6 +736,190 @@ components:
           type: string
           format: uri
 
+    RankRequirements:
+      type: object
+      additionalProperties: false
+      required: [rankInformation, requirements]
+      properties:
+        rankInformation:
+          $ref: "#/components/schemas/RankInformation"
+        requirements:
+          type: array
+          items:
+            $ref: "#/components/schemas/RankRequirement"
+
+    RankInformation:
+      type: object
+      additionalProperties: false
+      description: >-
+        The rank, as of the returned requirements version. Fields match those
+        of the same name in `Rank`.
+      required:
+        - rankId
+        - name
+        - version
+        - short
+        - reallyShort
+        - level
+        - image
+        - programId
+        - searchKeywords
+        - lds
+        - sku
+        - price
+        - priceLastUpdated
+        - scoutNet
+        - header
+        - footer
+        - adminNotes
+        - proofReadDate
+        - active
+        - disabledOnQuickEntry
+      properties:
+        rankId:
+          type: string
+          description: The rank's `id`
+          examples: ["19"]
+        name:
+          type: string
+          examples: [Venturing]
+        version:
+          type: string
+          description: Requirements version year
+          examples: ["2020"]
+        short:
+          type: string
+        reallyShort:
+          type: string
+        level:
+          type: string
+          examples: ["1"]
+        image:
+          type: string
+          examples: [venturing.png]
+        programId:
+          type: string
+          examples: ["4"]
+        searchKeywords:
+          type: string
+        lds:
+          $ref: "#/components/schemas/StringBoolean"
+        sku:
+          type: string
+          examples: ["620501"]
+        price:
+          type: string
+          examples: ["2.99"]
+        priceLastUpdated:
+          description: >-
+            `null` on some versions where the rank list has an empty string
+          type: [string, "null"]
+          anyOf:
+            - $ref: "#/components/schemas/StringDate"
+            - type: "null"
+        scoutNet:
+          type: string
+          examples: [RV11]
+        header:
+          type: string
+          description: Introductory text, may contain HTML, or empty
+        footer:
+          type: string
+          description: Notes, often containing HTML, or empty
+        adminNotes:
+          type: string
+          description: Internal free-text notes
+        proofReadDate:
+          $ref: "#/components/schemas/StringDate"
+        active:
+          $ref: "#/components/schemas/StringBoolean"
+        disabledOnQuickEntry:
+          $ref: "#/components/schemas/StringBoolean"
+
+    RankRequirement:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - versionId
+        - name
+        - short
+        - listNumber
+        - requirementNumber
+        - sortOrder
+        - footer
+        - childrenRequired
+        - required
+        - parentRequirementId
+        - videoExternalURLId
+        - previousRankRequired
+        - monthsSinceLastRankRequired
+        - eagleMBRequired
+        - totalMBRequired
+        - serviceHoursRequired
+        - disabledOnQuickEntry
+        - linkedAdventureId
+        - linkedAwardId
+      properties:
+        id:
+          type: string
+          examples: ["1246"]
+        versionId:
+          type: string
+          description: "`versionId` of the requirements version"
+          examples: ["61"]
+        name:
+          type: string
+          description: Requirement text. Sometimes contains HTML.
+        short:
+          type: string
+          description: Short label, or empty
+        listNumber:
+          type: string
+          description: Display label, e.g. `1a.` or `(a)`, or empty
+          examples: ["1a.", "(a)"]
+        requirementNumber:
+          type: string
+          description: Short identifier, e.g. `1a`, or empty
+          examples: [1a]
+        sortOrder:
+          type: string
+          description: Dotted sort key, e.g. `1.1`, or empty
+          examples: ["1", "1.1"]
+        footer:
+          type: string
+        childrenRequired:
+          type: string
+          description: Number of child requirements that must be completed, or empty
+          examples: ["2"]
+        required:
+          $ref: "#/components/schemas/StringBoolean"
+        parentRequirementId:
+          type: string
+          description: "`id` of the parent requirement, or empty for top-level requirements"
+        videoExternalURLId:
+          type: string
+        previousRankRequired:
+          $ref: "#/components/schemas/StringBoolean"
+        monthsSinceLastRankRequired:
+          type: string
+          examples: ["4"]
+        eagleMBRequired:
+          type: string
+          examples: ["13"]
+        totalMBRequired:
+          type: string
+          examples: ["21"]
+        serviceHoursRequired:
+          type: string
+          examples: ["6"]
+        disabledOnQuickEntry:
+          $ref: "#/components/schemas/StringBoolean"
+        linkedAdventureId:
+          type: string
+        linkedAwardId:
+          type: string
+
     StringBoolean:
       type: string
       enum: ["True", "False"]
@@ -687,9 +965,19 @@ components:
       required: true
       description: Merit badge `id` from the merit badge list (not `bsaNumber`)
       schema:
-        type: string
-        pattern: "^[0-9]+$"
-        examples: ["3"]
+        type: integer
+        minimum: 1
+        examples: [3]
+
+    RankId:
+      name: rankId
+      in: path
+      required: true
+      description: Rank `id` from the rank list
+      schema:
+        type: integer
+        minimum: 1
+        examples: [1]
 
   responses:
     InvalidQuery:
