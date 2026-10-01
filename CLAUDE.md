@@ -11,9 +11,10 @@ This is a pnpm workspace. The spec package is `packages/spec/`, and file paths b
 1. Read `info.description` in `openapi.yaml`. It lists API-wide quirks that change how you must call the API, both when sampling and in contract tests.
 2. Call the live endpoint and save real responses, including every error case (bad input, unknown ID). Sample until each field's presence and type is settled: many records, and every variant a parameter can select, such as filters and old versions.
 3. Probe for undocumented query parameters. Try likely names, and read the error messages, which can name the valid parameters.
-4. Describe it in `openapi.yaml` following the spec rules below.
-5. Add a contract test in `tests/api.arazzo.yaml` for every status code you documented.
-6. Done when `pnpm check` and `pnpm test` both pass.
+4. Trace every foreign key: a field holding another record's ID, such as `actTypeId`. Find the endpoint that lists those records, in the spec or by trying paths guessed from the field name, and confirm its IDs cover the values you sampled. Report any key you couldn't trace, and any new endpoint you found, to the user.
+5. Describe it in `openapi.yaml` following the spec rules below.
+6. Add a contract test in `tests/api.arazzo.yaml` for every status code you documented.
+7. Done when `pnpm check` and `pnpm test` both pass.
 
 ## Spec rules
 
@@ -23,6 +24,7 @@ This is a pnpm workspace. The spec package is `packages/spec/`, and file paths b
 - List a field in `required` only if it appeared in every sampled response.
 - Every object schema sets `additionalProperties: false`, so the contract tests fail when the API adds a field. Give every schema a `type`, including `anyOf` unions, because the lint rule for this treats an untyped schema as an object.
 - Reuse what's in `components` (schemas, parameters, responses) before adding new ones.
+- Give each traced foreign key a named ID schema in `components`, and `$ref` it from both the key and the `id` of the record it points to. When the two sides have different types, describe the link in the key's description instead.
 - Document each error response with a real example captured from the API.
 
 ## Strictness
