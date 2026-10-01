@@ -28,7 +28,9 @@ tags:
   - name: Advancement
     description: Ranks, merit badges, and other advancement
   - name: Lookups
-    description: Reference lists, such as countries, states, and positions
+    description: >-
+      Reference lists, such as countries, states, positions, and swimming
+      classifications
 
 paths:
   /advancements/meritBadges:
@@ -514,6 +516,41 @@ paths:
                   unitTypes:
                     - image: scoutmaster200.png
                       unitTypeId: "2"
+
+  /lookups/advancements/swimmingClassification:
+    get:
+      tags: [Lookups]
+      operationId: listSwimmingClassifications
+      summary: List swimming classifications
+      description: >-
+        Returns all swimming classifications as an array sorted by `id`, with
+        no paging.
+      security: []
+      responses:
+        "200":
+          description: An array of every swimming classification
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SwimmingClassification"
+              example:
+                - id: 1899
+                  name: Does not know how to swim
+                  short: Nonswimmer
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
+                - id: 1900
+                  name: Beginner level swimming skills
+                  short: Beginner
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
+                - id: 1901
+                  name: Knows how to swim
+                  short: Swimmer
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
 
 components:
   schemas:
@@ -1191,6 +1228,27 @@ components:
                 type: string
                 pattern: "^([0-9]+)?$"
                 examples: ["2", ""]
+
+    SwimmingClassification:
+      type: object
+      additionalProperties: false
+      required: [id, name, short, effectiveDt, expiryDt]
+      properties:
+        id:
+          type: integer
+          examples: [1901]
+        name:
+          type: string
+          examples: [Knows how to swim]
+        short:
+          type: string
+          examples: [Swimmer]
+        effectiveDt:
+          type: string
+          format: date
+          examples: ["2010-01-01"]
+        expiryDt:
+          type: "null"
 
     StringBoolean:
       type: string

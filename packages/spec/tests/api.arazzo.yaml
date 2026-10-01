@@ -144,3 +144,10 @@ workflows:
         operationId: $sourceDescriptions.api.listPositions
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: swimming-classifications
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listSwimmingClassifications
+        successCriteria:
+          - condition: $statusCode == 200
