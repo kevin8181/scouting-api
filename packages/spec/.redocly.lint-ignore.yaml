@@ -13,6 +13,8 @@ openapi.yaml:
     - '#/paths/~1lookups~1communications~1communicationTypes/get/responses'
     - '#/paths/~1lookups~1communications~1mobilePhoneCarrier/get/responses'
     - '#/paths/~1lookups~1communications~1phoneCountryCodes/get/responses'
+    - '#/paths/~1lookups~1organizations~1types/get/responses'
     - '#/paths/~1lookups~1person~1grades/get/responses'
     - '#/paths/~1lookups~1person~1nameSuffixes/get/responses'
+    - '#/paths/~1lookups~1person~1positions/get/responses'
     - '#/paths/~1lookups~1person~1titlePrefixes/get/responses'

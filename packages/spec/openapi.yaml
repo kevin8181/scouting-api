@@ -908,6 +908,93 @@ paths:
                   short: "98 "
                   id: "854"
 
+  /lookups/organizations/positions:
+    get:
+      tags: [Lookups]
+      operationId: listOrganizationPositions
+      summary: List organization positions
+      description: >-
+        Returns the person positions that have not expired, as an array sorted
+        by `positionId`, with fields renamed and IDs as numbers. Fields match
+        the person position list, except that `isKey3` and `isPlus3` can be
+        `null` where that list has `false`.
+      security: []
+      parameters:
+        - name: organizationType
+          in: query
+          description: >-
+            Organization type `id` from the organization type list, as a
+            number. Returns only positions whose `relationshipTypeId` matches.
+            For `6` (Unit), only some of those positions are returned. `7`
+            returns an empty list, and `8` is rejected.
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4, 5, 6, 7]
+            examples: [4]
+      responses:
+        "200":
+          description: Matching organization positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrganizationPosition"
+              example:
+                - positionId: 482
+                  positionShort: SM V
+                  positionLong: Scoutmaster
+                  isPaidRegistration: true
+                  relationshipType: U
+                  skPositionTypeCd: V
+                  isKey3: true
+                  isPlus3: false
+                  skPositionCd: SM
+                  functionalPosition: false
+                  relationshipTypeId: 6
+                  isDirectContact: true
+                  isAdult: true
+                  isYouth: false
+                  isCBCRequired: true
+                  isDisplayed: true
+                  isExtendedAccess: "N"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+
+  /lookups/organizations/types:
+    get:
+      tags: [Lookups]
+      operationId: listOrganizationTypes
+      summary: List organization types
+      description: Returns all organization types as an array sorted by `name`.
+      security: []
+      responses:
+        "200":
+          description: An array of every organization type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrganizationType"
+              example:
+                - id: "3"
+                  name: Area
+                - id: "4"
+                  name: Council
+                - id: "5"
+                  name: CouncilEntity
+                - id: "8"
+                  name: CouncilServiceTerritory
+                - id: "7"
+                  name: Group
+                - id: "1"
+                  name: National
+                - id: "2"
+                  name: Region
+                - id: "6"
+                  name: Unit
+
   /lookups/person/grades:
     get:
       tags: [Lookups]
@@ -972,6 +1059,101 @@ paths:
                 - id: "1909"
                   name: XII
                   short: XII
+
+  /lookups/person/positions:
+    get:
+      tags: [Lookups]
+      operationId: listPersonPositions
+      summary: List person positions
+      description: >-
+        Returns all person positions, including expired ones, as an array
+        sorted by `id`. These IDs are separate from the positions list's;
+        that list and the youth leadership positions list link here through
+        `akelaPositionId`, and the organization position list through
+        `positionId`.
+      security: []
+      responses:
+        "200":
+          description: An array of every person position
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonPosition"
+              example:
+                - id: "482"
+                  name: Scoutmaster
+                  short: SM V
+                  code: SM
+                  typeCode: V
+                  key3: true
+                  plus3: false
+                  organizationTypeId: "6"
+                  organizationType: Unit
+                  packPosition: false
+                  troopPosition: true
+                  teamPosition: false
+                  crewPosition: false
+                  shipPosition: false
+                  explorerPosition: false
+                  stemPosition: false
+                  paidRegistrationRequired: true
+                  isAdult: true
+                  cbcRequired: true
+                  extendedAccessEligible: "N"
+                  directContact: true
+                  effectiveDate: "1911-01-01"
+                  expiryDate: ""
+                  functionalPositionFlag: false
+                - id: "501"
+                  name: Senior Patrol Leader
+                  short: PTRL SLDR
+                  code: F213
+                  typeCode: F
+                  key3: false
+                  plus3: false
+                  organizationTypeId: "6"
+                  organizationType: Unit
+                  packPosition: false
+                  troopPosition: false
+                  teamPosition: false
+                  crewPosition: false
+                  shipPosition: false
+                  explorerPosition: false
+                  stemPosition: false
+                  paidRegistrationRequired: false
+                  isAdult: true
+                  cbcRequired: false
+                  extendedAccessEligible: "N"
+                  directContact: false
+                  effectiveDate: "2013-05-05"
+                  expiryDate: ""
+                  functionalPositionFlag: true
+                - id: "660"
+                  name: Lion Coordinator
+                  short: LC V
+                  code: LC
+                  typeCode: V
+                  key3: false
+                  plus3: true
+                  organizationTypeId: ""
+                  organizationType: ""
+                  packPosition: false
+                  troopPosition: false
+                  teamPosition: false
+                  crewPosition: false
+                  shipPosition: false
+                  explorerPosition: false
+                  stemPosition: false
+                  paidRegistrationRequired: true
+                  isAdult: true
+                  cbcRequired: true
+                  extendedAccessEligible: "N"
+                  directContact: false
+                  effectiveDate: "2016-06-01"
+                  expiryDate: "2025-05-31"
+                  functionalPositionFlag: false
 
   /lookups/person/titlePrefixes:
     get:
@@ -1767,8 +1949,12 @@ components:
           examples: [SM, ""]
         akelaPositionId:
           type: string
-          pattern: "^([0-9]+)?$"
-          examples: ["482", ""]
+          description: >-
+            The matching person position, or an empty string if there is none
+          anyOf:
+            - $ref: "#/components/schemas/PersonPositionId"
+            - type: string
+              const: ""
         isKey3:
           type: string
           enum: ["True", "False", ""]
@@ -1913,6 +2099,9 @@ components:
           type: "null"
         akelaPositionId:
           type: [integer, "null"]
+          description: >-
+            Person position `id` from the person position list, as a number
+            instead of a string, or `null` if there is none
           examples: [501, null]
         isKey3:
           type: boolean
@@ -2015,6 +2204,101 @@ components:
             zeros or a trailing space, and is `~~` for the Not Provided entry.
           examples: ["44", "001", "98 ", "~~"]
 
+    OrganizationPosition:
+      type: object
+      additionalProperties: false
+      required:
+        - positionId
+        - positionShort
+        - positionLong
+        - isPaidRegistration
+        - relationshipType
+        - skPositionTypeCd
+        - isKey3
+        - isPlus3
+        - skPositionCd
+        - functionalPosition
+        - relationshipTypeId
+        - isDirectContact
+        - isAdult
+        - isYouth
+        - isCBCRequired
+        - isDisplayed
+        - isExtendedAccess
+      properties:
+        positionId:
+          type: integer
+          description: >-
+            Person position `id` from the person position list, as a number
+            instead of a string
+          examples: [482]
+        positionShort:
+          type: string
+          description: The person position's `short`
+          examples: [SM V]
+        positionLong:
+          type: string
+          description: The person position's `name`
+          examples: [Scoutmaster]
+        isPaidRegistration:
+          type: boolean
+        relationshipType:
+          type: [string, "null"]
+          description: >-
+            Single-letter code, or `null`. Does not always agree with
+            `relationshipTypeId`.
+          examples: [U, C, null]
+        skPositionTypeCd:
+          type: string
+          description: The person position's `typeCode`
+          examples: [V, F]
+        isKey3:
+          type: [boolean, "null"]
+        isPlus3:
+          type: [boolean, "null"]
+        skPositionCd:
+          type: string
+          description: The person position's `code`
+          examples: [SM, F213]
+        functionalPosition:
+          type: boolean
+        relationshipTypeId:
+          type: [integer, "null"]
+          description: >-
+            Organization type `id` from the organization type list, as a
+            number instead of a string, or `null` if not set
+          examples: [6, null]
+        isDirectContact:
+          type: boolean
+        isAdult:
+          type: boolean
+        isYouth:
+          type: boolean
+        isCBCRequired:
+          type: boolean
+        isDisplayed:
+          type: boolean
+        isExtendedAccess:
+          type: string
+          enum: ["Y", "N"]
+
+    OrganizationType:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          $ref: "#/components/schemas/OrganizationTypeId"
+        name:
+          type: string
+          examples: [Unit, CouncilServiceTerritory]
+
+    OrganizationTypeId:
+      type: string
+      description: An `id` from the organization type list
+      pattern: "^[0-9]+$"
+      examples: ["6"]
+
     Grade:
       type: object
       additionalProperties: false
@@ -2046,6 +2330,109 @@ components:
           type: string
           description: Abbreviated form, as written after a name
           examples: [Jr., III]
+
+    PersonPosition:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - short
+        - code
+        - typeCode
+        - key3
+        - plus3
+        - organizationTypeId
+        - organizationType
+        - packPosition
+        - troopPosition
+        - teamPosition
+        - crewPosition
+        - shipPosition
+        - explorerPosition
+        - stemPosition
+        - paidRegistrationRequired
+        - isAdult
+        - cbcRequired
+        - extendedAccessEligible
+        - directContact
+        - effectiveDate
+        - expiryDate
+        - functionalPositionFlag
+      properties:
+        id:
+          $ref: "#/components/schemas/PersonPositionId"
+        name:
+          type: string
+          description: Not unique, and can have trailing whitespace
+          examples: [Scoutmaster]
+        short:
+          type: string
+          description: >-
+            Unique abbreviated label. Often `code` and `typeCode` joined by a
+            space, but not always.
+          examples: [SM V, PTRL SLDR]
+        code:
+          type: string
+          description: Not unique, even combined with `typeCode`
+          examples: [SM, F213]
+        typeCode:
+          type: string
+          examples: [V, F, SBF]
+        key3:
+          type: boolean
+        plus3:
+          type: boolean
+        organizationTypeId:
+          type: string
+          description: The organization type, or an empty string if not set
+          anyOf:
+            - $ref: "#/components/schemas/OrganizationTypeId"
+            - type: string
+              const: ""
+        organizationType:
+          type: string
+          description: >-
+            Can be empty, a name, or a short code, and does not always agree
+            with `organizationTypeId`
+          examples: [Unit, Council, R, ""]
+        packPosition:
+          type: boolean
+        troopPosition:
+          type: boolean
+        teamPosition:
+          type: boolean
+        crewPosition:
+          type: boolean
+        shipPosition:
+          type: boolean
+        explorerPosition:
+          type: boolean
+        stemPosition:
+          type: boolean
+        paidRegistrationRequired:
+          type: boolean
+        isAdult:
+          type: boolean
+        cbcRequired:
+          type: boolean
+        extendedAccessEligible:
+          type: string
+          enum: ["Y", "N"]
+        directContact:
+          type: boolean
+        effectiveDate:
+          $ref: "#/components/schemas/StringDate"
+        expiryDate:
+          $ref: "#/components/schemas/StringDate"
+        functionalPositionFlag:
+          type: boolean
+
+    PersonPositionId:
+      type: string
+      description: An `id` from the person position list
+      pattern: "^[0-9]+$"
+      examples: ["482"]
 
     TitlePrefix:
       type: object

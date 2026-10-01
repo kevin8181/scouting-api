@@ -244,6 +244,35 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
 
+  - workflowId: organizationPositions
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listOrganizationPositions
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: list-invalid-organization-type
+        operationId: $sourceDescriptions.api.listOrganizationPositions
+        parameters:
+          - name: organizationType
+            in: query
+            value: 8
+        successCriteria:
+          - condition: $statusCode == 400
+
+  - workflowId: organizationTypes
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listOrganizationTypes
+        successCriteria:
+          - condition: $statusCode == 200
+
+  - workflowId: personPositions
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listPersonPositions
+        successCriteria:
+          - condition: $statusCode == 200
+
   - workflowId: titlePrefixes
     steps:
       - stepId: list
