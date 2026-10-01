@@ -137,3 +137,10 @@ workflows:
             value: 999999
         successCriteria:
           - condition: $statusCode == 404
+
+  - workflowId: positions
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listPositions
+        successCriteria:
+          - condition: $statusCode == 200

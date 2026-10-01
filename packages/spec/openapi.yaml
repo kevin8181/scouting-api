@@ -28,7 +28,7 @@ tags:
   - name: Advancement
     description: Ranks, merit badges, and other advancement
   - name: Lookups
-    description: Reference lists, such as countries and states
+    description: Reference lists, such as countries, states, and positions
 
 paths:
   /advancements/meritBadges:
@@ -475,6 +475,45 @@ paths:
                 errorCode: M404
                 message: Not Found
                 errorDesc: Record is not found. id= 999999
+
+  /lookups/advancements/positions:
+    get:
+      tags: [Lookups]
+      operationId: listPositions
+      summary: List positions
+      description: >-
+        Returns all positions, including retired ones, as an array sorted by
+        `id`, with no paging.
+      security: []
+      responses:
+        "200":
+          description: An array of every position
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Position"
+              example:
+                - id: "1"
+                  name: Scoutmaster
+                  minAge: "21"
+                  maxAge: ""
+                  isAdultPosition: "True"
+                  isLeadershipPosition: "True"
+                  positionCode: SM
+                  isUnitPosition: "True"
+                  isDistrictPosition: "False"
+                  isCouncilPosition: "False"
+                  isTerritoryPosition: null
+                  isNationalPosition: "False"
+                  isRetired: "False"
+                  akelaSkPositionCd: SM
+                  akelaPositionId: "482"
+                  isKey3: "True"
+                  unitTypes:
+                    - image: scoutmaster200.png
+                      unitTypeId: "2"
 
 components:
   schemas:
@@ -1063,6 +1102,95 @@ components:
         id:
           type: string
           examples: ["55"]
+
+    Position:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - minAge
+        - maxAge
+        - isAdultPosition
+        - isLeadershipPosition
+        - positionCode
+        - isUnitPosition
+        - isDistrictPosition
+        - isCouncilPosition
+        - isTerritoryPosition
+        - isNationalPosition
+        - isRetired
+        - akelaSkPositionCd
+        - akelaPositionId
+        - isKey3
+        - unitTypes
+      properties:
+        id:
+          type: string
+          examples: ["1"]
+        name:
+          type: string
+          description: Not unique; a retired position can share a name
+          examples: [Scoutmaster]
+        minAge:
+          type: string
+          description: Minimum age in years, or an empty string if not set
+          pattern: "^([0-9]+)?$"
+          examples: ["21", ""]
+        maxAge:
+          type: string
+          description: Maximum age in years, or an empty string if not set
+          pattern: "^([0-9]+)?$"
+          examples: ["40", ""]
+        isAdultPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        isLeadershipPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        positionCode:
+          type: string
+          description: Short code, or an empty string if not set
+          examples: [SM, ""]
+        isUnitPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        isDistrictPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        isCouncilPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        isTerritoryPosition:
+          type: "null"
+        isNationalPosition:
+          $ref: "#/components/schemas/StringBoolean"
+        isRetired:
+          $ref: "#/components/schemas/StringBoolean"
+        akelaSkPositionCd:
+          type: string
+          examples: [SM, ""]
+        akelaPositionId:
+          type: string
+          pattern: "^([0-9]+)?$"
+          examples: ["482", ""]
+        isKey3:
+          type: string
+          enum: ["True", "False", ""]
+        unitTypes:
+          type: array
+          description: >-
+            A position with no unit type has a single entry whose `unitTypeId`
+            and `image` are empty strings.
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [image, unitTypeId]
+            properties:
+              image:
+                type: string
+                description: Image file name, or an empty string if not set
+                examples: [scoutmaster200.png, ""]
+              unitTypeId:
+                type: string
+                pattern: "^([0-9]+)?$"
+                examples: ["2", ""]
 
     StringBoolean:
       type: string
