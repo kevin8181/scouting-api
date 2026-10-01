@@ -27,8 +27,6 @@ servers:
 tags:
   - name: Advancement
     description: Ranks, merit badges, and other advancement
-  - name: Organizations
-    description: Councils and other Scouting America organizations
 
 paths:
   /advancements/meritBadges:
@@ -274,54 +272,6 @@ paths:
                     imageUrl400: https://d1kn0x9vzr5n76.cloudfront.net/images/ranks/discovery400.png
         "400":
           $ref: "#/components/responses/InvalidQuery"
-
-  /organizations/v2/zip/{zipCode}/council:
-    get:
-      tags: [Organizations]
-      operationId: getCouncilByZip
-      summary: Get the council serving a ZIP code
-      description: >-
-        Looks up the local council for a 5-digit US ZIP code, including Puerto
-        Rico. Returns 404 if no council is found for the ZIP code.
-      security: []
-      parameters:
-        - $ref: "#/components/parameters/ZipCode"
-      responses:
-        "200":
-          description: The council that serves the ZIP code
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Council"
-              example:
-                councilClass: "100"
-                councilName: Circle Ten
-                councilNumber: "571"
-                zipCode: "75038"
-                previousCouncilNumber: ""
-                primaryAddress:
-                  address1: 8605 Harry Hines Blvd
-                  address2: ""
-                  address3: ""
-                  city: Dallas
-                  county: DALLAS
-                  zipCode: "75235"
-                  zipCodeEx: "3014"
-                  state: TEXAS
-                  country: USA
-                primaryPhone:
-                  country: USA
-                  countryCode: ""
-                  areaCode: "214"
-                  prefix: "902"
-                  lineNumber: "6700"
-                  extension: ""
-                primaryEmail:
-                  email: ""
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
 components:
   schemas:
@@ -701,112 +651,6 @@ components:
       description: Date as `YYYY-MM-DD`, or an empty string if not set
       pattern: "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"
 
-    Council:
-      type: object
-      additionalProperties: false
-      required:
-        - councilClass
-        - councilName
-        - councilNumber
-        - zipCode
-        - previousCouncilNumber
-        - primaryAddress
-        - primaryPhone
-        - primaryEmail
-      properties:
-        councilClass:
-          type: string
-          examples: ["100"]
-        councilName:
-          type: string
-          examples: [Circle Ten]
-        councilNumber:
-          type: string
-          examples: ["571"]
-        zipCode:
-          type: string
-          description: The ZIP code that was looked up
-          examples: ["75038"]
-        previousCouncilNumber:
-          type: string
-        primaryAddress:
-          $ref: "#/components/schemas/Address"
-        primaryPhone:
-          $ref: "#/components/schemas/Phone"
-        primaryEmail:
-          $ref: "#/components/schemas/Email"
-
-    Address:
-      type: object
-      additionalProperties: false
-      required:
-        - address1
-        - address2
-        - address3
-        - city
-        - county
-        - zipCode
-        - zipCodeEx
-        - state
-        - country
-      properties:
-        address1:
-          type: string
-        address2:
-          type: string
-        address3:
-          type: string
-        city:
-          type: string
-        county:
-          type: string
-        zipCode:
-          type: string
-          description: 5-digit ZIP code
-        zipCodeEx:
-          type: string
-          description: ZIP+4 extension
-        state:
-          type: string
-          description: Full state name, upper case
-          examples: [TEXAS]
-        country:
-          type: string
-          examples: [USA]
-
-    Phone:
-      type: object
-      additionalProperties: false
-      required:
-        - country
-        - countryCode
-        - areaCode
-        - prefix
-        - lineNumber
-        - extension
-      properties:
-        country:
-          type: string
-        countryCode:
-          type: string
-        areaCode:
-          type: string
-        prefix:
-          type: string
-        lineNumber:
-          type: string
-        extension:
-          type: string
-
-    Email:
-      type: object
-      additionalProperties: false
-      required:
-        - email
-      properties:
-        email:
-          type: string
-
     Error:
       type: object
       additionalProperties: false
@@ -817,13 +661,13 @@ components:
       properties:
         errorCode:
           type: string
-          examples: [M404]
+          examples: [M400]
         message:
           type: string
-          examples: [Not Found]
+          examples: [Bad Request]
         errorDesc:
           type: string
-          examples: [Council not found]
+          examples: [Query parameter id is not repeatable]
 
   parameters:
     CacheControl:
@@ -847,27 +691,7 @@ components:
         pattern: "^[0-9]+$"
         examples: ["3"]
 
-    ZipCode:
-      name: zipCode
-      in: path
-      required: true
-      description: 5-digit US ZIP code
-      schema:
-        type: string
-        pattern: "^[0-9]{5}$"
-        examples: ["75038"]
-
   responses:
-    BadRequest:
-      description: The request was invalid
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-          example:
-            errorCode: M400
-            message: Bad Request
-            errorDesc: uri parameter zipCode is not a valid zipCode
     InvalidQuery:
       description: >-
         A query parameter has an invalid value, is repeated, or (on some
@@ -881,13 +705,3 @@ components:
             errorCode: M400
             message: Bad Request
             errorDesc: Invalid value 'bogus' for query parameter status. bogus is not a valid enum value
-    NotFound:
-      description: The resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-          example:
-            errorCode: M404
-            message: Not Found
-            errorDesc: Council not found
