@@ -1328,9 +1328,7 @@ components:
             breaks
           examples: [Veterans]
         actTypeId:
-          type: integer
-          description: Activity type `id` from the activity type list
-          examples: [1]
+          $ref: "#/components/schemas/ActivityTypeId"
         effectiveDt:
           type: string
           format: date
@@ -1344,12 +1342,16 @@ components:
       required: [id, description]
       properties:
         id:
-          type: integer
-          examples: [2]
+          $ref: "#/components/schemas/ActivityTypeId"
         description:
           type: string
           description: Display name
           examples: [Camping]
+
+    ActivityTypeId:
+      type: integer
+      description: An `id` from the activity type list
+      examples: [2]
 
     CalendarEventType:
       type: object
