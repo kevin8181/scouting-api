@@ -15,3 +15,4 @@ openapi.yaml:
     - '#/paths/~1lookups~1communications~1phoneCountryCodes/get/responses'
     - '#/paths/~1lookups~1person~1grades/get/responses'
     - '#/paths/~1lookups~1person~1nameSuffixes/get/responses'
+    - '#/paths/~1lookups~1person~1titlePrefixes/get/responses'

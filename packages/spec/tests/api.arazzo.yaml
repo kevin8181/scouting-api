@@ -243,3 +243,10 @@ workflows:
         operationId: $sourceDescriptions.api.listNameSuffixes
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: titlePrefixes
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listTitlePrefixes
+        successCriteria:
+          - condition: $statusCode == 200

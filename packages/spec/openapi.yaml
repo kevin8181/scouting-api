@@ -973,6 +973,39 @@ paths:
                   name: XII
                   short: XII
 
+  /lookups/person/titlePrefixes:
+    get:
+      tags: [Lookups]
+      operationId: listTitlePrefixes
+      summary: List title prefixes
+      description: Returns all personal title prefixes as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every title prefix
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TitlePrefix"
+              example:
+                - id: "889"
+                  name: Dr
+                  short: DR
+                - id: "890"
+                  name: Mr
+                  short: MR
+                - id: "891"
+                  name: Mrs
+                  short: MRS
+                - id: "892"
+                  name: Ms
+                  short: MS
+                - id: "893"
+                  name: Rev
+                  short: REV
+
 components:
   schemas:
     MeritBadge:
@@ -2013,6 +2046,23 @@ components:
           type: string
           description: Abbreviated form, as written after a name
           examples: [Jr., III]
+
+    TitlePrefix:
+      type: object
+      additionalProperties: false
+      required: [id, name, short]
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9]+$"
+          examples: ["889"]
+        name:
+          type: string
+          examples: [Dr, Mrs]
+        short:
+          type: string
+          description: Uppercase form of `name`
+          examples: [DR, MRS]
 
     StringBoolean:
       type: string
