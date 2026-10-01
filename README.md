@@ -2,7 +2,7 @@
 
 An unofficial OpenAPI description of the Scouting America API. This project is not affiliated with or endorsed by Scouting America.
 
-The spec lives in [`openapi.yaml`](openapi.yaml).
+The spec lives in [`openapi.yaml`](openapi.yaml). Browse the docs at **https://kevin8181.github.io/scouting-api/**.
 
 ## Development
 
