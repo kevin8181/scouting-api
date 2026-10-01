@@ -2,11 +2,19 @@
 
 An unofficial OpenAPI description of the Scouting America API. This project is not affiliated with or endorsed by Scouting America.
 
-The spec lives in [`openapi.yaml`](openapi.yaml). Browse the docs at **https://kevin8181.github.io/scouting-api/**.
+The spec lives in [`packages/spec/openapi.yaml`](packages/spec/openapi.yaml). Browse the docs at **https://kevin8181.github.io/scouting-api/**.
+
+## Layout
+
+This is a pnpm workspace. Each package lives in `packages/` and owns its own dependencies and scripts. The root holds shared tooling (Prettier, Knip, TypeScript settings, CI), and root scripts run across every package.
+
+| Package                          | Contents                                     |
+| -------------------------------- | -------------------------------------------- |
+| [`packages/spec`](packages/spec) | The OpenAPI spec, docs build, contract tests |
 
 ## Development
 
-Requires Node.js and pnpm.
+Requires Node.js and pnpm. Run commands from the repository root.
 
 ```sh
 pnpm install
@@ -15,13 +23,13 @@ pnpm install
 | Command          | Description                                                                        |
 | ---------------- | ---------------------------------------------------------------------------------- |
 | `pnpm dev`       | Serve the docs at http://localhost:8080 and rebuild on change                      |
-| `pnpm build`     | Build the docs to `dist/index.html`                                                |
+| `pnpm build`     | Build every package (the docs go to `packages/spec/dist/`)                         |
 | `pnpm check`     | Run `format`, `lint`, `typecheck`, and `knip`. Run before committing               |
 | `pnpm lint`      | Lint the spec and tests with Redocly, and check every response has a contract test |
 | `pnpm format`    | Format all files with Prettier                                                     |
-| `pnpm typecheck` | Type-check the scripts in `scripts/`                                               |
+| `pnpm typecheck` | Type-check every package                                                           |
 | `pnpm knip`      | Find unused files and dependencies with Knip                                       |
-| `pnpm test`      | Run the contract tests in `tests/` against the live API                            |
+| `pnpm test`      | Run the contract tests against the live API                                        |
 
 CI checks formatting, lints the spec, type-checks the scripts, runs Knip, and builds the docs on every push to `main` and on pull requests.
 
@@ -29,10 +37,10 @@ The contract tests use [Redocly Respect](https://redocly.com/docs/respect) to se
 
 ### Lint exceptions
 
-Deliberate exceptions to Redocly's lint rules are listed in `.redocly.lint-ignore.yaml`. Regenerate it with:
+Deliberate exceptions to Redocly's lint rules are listed in `packages/spec/.redocly.lint-ignore.yaml`. Regenerate it with:
 
 ```sh
-pnpm exec redocly lint openapi.yaml --generate-ignore-file
+pnpm --filter @scouting-api/spec exec redocly lint openapi.yaml --generate-ignore-file
 ```
 
 ## License

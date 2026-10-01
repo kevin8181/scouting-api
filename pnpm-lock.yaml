@@ -8,18 +8,21 @@ importers:
 
   .:
     devDependencies:
-      '@redocly/cli':
-        specifier: ^2.57.0
-        version: 2.57.0
-      '@types/node':
-        specifier: ^24.19.0
-        version: 24.19.0
       knip:
         specifier: ^6.39.0
         version: 6.39.0
       prettier:
         specifier: ^3.9.9
         version: 3.9.9
+
+  packages/spec:
+    devDependencies:
+      '@redocly/cli':
+        specifier: ^2.57.0
+        version: 2.57.0
+      '@types/node':
+        specifier: ^24.19.0
+        version: 24.19.0
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

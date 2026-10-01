@@ -4,6 +4,8 @@ This repo is an unofficial OpenAPI description of an API we don't control. The l
 
 `openapi.yaml` is the single source of truth for API details. Keep endpoint behavior, field meanings, and quirks there, and keep the README and this file about the repo.
 
+This is a pnpm workspace. The spec package is `packages/spec/`, and file paths below are relative to it. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies; the root holds only tooling shared across packages.
+
 ## Adding or changing an endpoint
 
 1. Call the live endpoint and save real responses, including the error cases (bad input, unknown ID). Sample widely before deciding a field is always present or always a given type: many records, varied inputs.

@@ -8,10 +8,10 @@ on:
   push:
     branches: [main]
     paths: &paths
-      - openapi.yaml
-      - tests/**
+      - packages/spec/**
       - package.json
       - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - .nvmrc
       - .github/workflows/contract-tests.yml
   pull_request:
