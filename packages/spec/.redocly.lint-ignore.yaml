@@ -11,3 +11,4 @@ openapi.yaml:
     - '#/paths/~1lookups~1advancements~1unitTypes/get/responses'
     - '#/paths/~1lookups~1communications~1classifications/get/responses'
     - '#/paths/~1lookups~1communications~1communicationTypes/get/responses'
+    - '#/paths/~1lookups~1communications~1mobilePhoneCarrier/get/responses'

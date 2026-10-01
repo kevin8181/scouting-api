@@ -842,6 +842,40 @@ paths:
                   short: FB
                   doNotDisplay: "True"
 
+  /lookups/communications/mobilePhoneCarrier:
+    get:
+      tags: [Lookups]
+      operationId: listMobilePhoneCarriers
+      summary: List mobile phone carriers
+      description: >-
+        Returns all mobile phone carriers as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every mobile phone carrier
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MobilePhoneCarrier"
+              example:
+                - id: 1878
+                  name: AT&T
+                  short: AT&T
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
+                - id: 1892
+                  name: T-Mobile
+                  short: T-Mobile
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
+                - id: 1895
+                  name: Verizon
+                  short: Verizon
+                  effectiveDt: "2010-01-01"
+                  expiryDt: null
+
 components:
   schemas:
     MeritBadge:
@@ -1809,6 +1843,27 @@ components:
           examples: [M, EMAL]
         doNotDisplay:
           $ref: "#/components/schemas/StringBoolean"
+
+    MobilePhoneCarrier:
+      type: object
+      additionalProperties: false
+      required: [id, name, short, effectiveDt, expiryDt]
+      properties:
+        id:
+          type: integer
+          examples: [1895]
+        name:
+          type: string
+          examples: [Verizon]
+        short:
+          type: string
+          examples: [Verizon]
+        effectiveDt:
+          type: string
+          format: date
+          examples: ["2010-01-01"]
+        expiryDt:
+          type: "null"
 
     StringBoolean:
       type: string

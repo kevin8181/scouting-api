@@ -215,3 +215,10 @@ workflows:
         operationId: $sourceDescriptions.api.listCommunicationTypes
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: mobile-phone-carriers
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listMobilePhoneCarriers
+        successCriteria:
+          - condition: $statusCode == 200
