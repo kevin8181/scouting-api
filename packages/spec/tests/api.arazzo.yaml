@@ -222,3 +222,10 @@ workflows:
         operationId: $sourceDescriptions.api.listMobilePhoneCarriers
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: phone-country-codes
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listPhoneCountryCodes
+        successCriteria:
+          - condition: $statusCode == 200

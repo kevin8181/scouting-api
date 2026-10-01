@@ -876,6 +876,38 @@ paths:
                   effectiveDt: "2010-01-01"
                   expiryDt: null
 
+  /lookups/communications/phoneCountryCodes:
+    get:
+      tags: [Lookups]
+      operationId: listPhoneCountryCodes
+      summary: List phone country codes
+      description: >-
+        Returns all country calling codes for phone numbers as an array sorted
+        by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every phone country code
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PhoneCountryCode"
+              example:
+                - name: Not Provided
+                  short: "~~"
+                  id: "635"
+                - name: USA
+                  short: "001"
+                  id: "636"
+                - name: Canada
+                  short: "01"
+                  id: "637"
+                - name: Iran
+                  short: "98 "
+                  id: "854"
+
 components:
   schemas:
     MeritBadge:
@@ -1864,6 +1896,26 @@ components:
           examples: ["2010-01-01"]
         expiryDt:
           type: "null"
+
+    PhoneCountryCode:
+      type: object
+      additionalProperties: false
+      required: [id, name, short]
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9]+$"
+          examples: ["636"]
+        name:
+          type: string
+          description: Country or region name
+          examples: [USA, Not Provided]
+        short:
+          type: string
+          description: >-
+            Calling code, without a `+`. Not unique, can have extra leading
+            zeros or a trailing space, and is `~~` for the Not Provided entry.
+          examples: ["44", "001", "98 ", "~~"]
 
     StringBoolean:
       type: string
