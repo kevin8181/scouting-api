@@ -943,6 +943,36 @@ paths:
                   gradeName: Other
                   displayOrder: 15
 
+  /lookups/person/nameSuffixes:
+    get:
+      tags: [Lookups]
+      operationId: listNameSuffixes
+      summary: List name suffixes
+      description: Returns all personal name suffixes as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every name suffix
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NameSuffix"
+              example:
+                - id: "875"
+                  name: Junior
+                  short: Jr.
+                - id: "876"
+                  name: Senior
+                  short: Sr.
+                - id: "879"
+                  name: III
+                  short: III
+                - id: "1909"
+                  name: XII
+                  short: XII
+
 components:
   schemas:
     MeritBadge:
@@ -1966,6 +1996,23 @@ components:
         displayOrder:
           type: integer
           examples: [2]
+
+    NameSuffix:
+      type: object
+      additionalProperties: false
+      required: [id, name, short]
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9]+$"
+          examples: ["875"]
+        name:
+          type: string
+          examples: [Junior, III]
+        short:
+          type: string
+          description: Abbreviated form, as written after a name
+          examples: [Jr., III]
 
     StringBoolean:
       type: string

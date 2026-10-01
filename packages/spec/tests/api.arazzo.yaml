@@ -236,3 +236,10 @@ workflows:
         operationId: $sourceDescriptions.api.listGrades
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: nameSuffixes
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listNameSuffixes
+        successCriteria:
+          - condition: $statusCode == 200
