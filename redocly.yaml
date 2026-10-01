@@ -1,0 +1,32 @@
+# Same rules as `recommended`, but every warning is an error.
+extends:
+  - recommended-strict
+
+# Enable rules that are off by default
+rules:
+  component-name-unique: error
+  info-contact: error
+  no-example-value-and-externalValue: error
+  operation-description: error
+  operation-singular-tag: error
+  operation-tag-defined: error
+  parameter-description: error
+  spec-strict-refs: error
+  tags-alphabetical: error
+
+  # Every object schema must reject unknown fields, so the contract tests catch
+  # fields the API adds that the spec doesn't describe yet.
+  rule/object-schemas-closed:
+    subject:
+      type: Schema
+      property: additionalProperties
+    where:
+      - subject:
+          type: Schema
+          property: type
+        assertions:
+          const: object
+    assertions:
+      defined: true
+      const: false
+    message: "Object schemas must set `additionalProperties: false`."
