@@ -1,0 +1,575 @@
+openapi: 3.1.0
+
+info:
+  title: Scouting America API
+  version: 0.1.0
+  description: >-
+    Unofficial, community-maintained description of the public Scouting
+    America API at api.scouting.org. Not affiliated with or endorsed by
+    Scouting America. The CC0 license applies to this description and repository only,
+    not to the API or its data.
+  license:
+    name: CC0 1.0 Universal
+    identifier: CC0-1.0
+
+servers:
+  - url: https://api.scouting.org
+    description: Production
+
+tags:
+  - name: Advancement
+    description: Ranks, merit badges, and other advancement
+  - name: Organizations
+    description: Councils and other Scouting America organizations
+
+paths:
+  /advancements/meritBadges:
+    get:
+      tags: [Advancement]
+      operationId: listMeritBadges
+      summary: List merit badges
+      security: []
+      responses:
+        "200":
+          description: All merit badges
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [meritBadges]
+                properties:
+                  meritBadges:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MeritBadge"
+              example:
+                meritBadges:
+                  - id: "3"
+                    categoryId: "3"
+                    category: Business and Industry
+                    bsaNumber: "15"
+                    name: American Business
+                    shortName: Amer. Business
+                    description: ""
+                    image: 15_150.png
+                    eagleRequired: "False"
+                    centennial: "False"
+                    dateCreated: ""
+                    dateDiscontinued: ""
+                    lastUpdated: "2014-08-20"
+                    adminNotes: ""
+                    worksheetDOC: ""
+                    worksheetPDF: http://meritbadge.org/wiki/images/7/70/American_Business.pdf
+                    bsaPamphletNumber: "35850"
+                    bsaPamphletEdition: "2002"
+                    bsaPamphletImage: 3.jpg
+                    bsaEmblemNumber: ""
+                    bsaEmblemImage: ""
+                    bsaRequirements: http://www.scouting.org/scoutsource/BoyScouts/AdvancementandAwards/MeritBadges/mb-ABIZ.aspx
+                    pageURL: american-business-merit-badge-requirements.asp
+                    searchKeywords: American Business Merit Badge Requirements
+                    sku: "659930"
+                    price: "3.99"
+                    priceLastUpdated: "2026-09-16"
+                    imageUrl50: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_50.png
+                    imageUrl100: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_100.png
+                    imageUrl200: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_200.png
+                    versions:
+                      - versionId: "282"
+                        version: "2019"
+                        versionEffectiveDt: "2019-01-01"
+                        versionExpiryDt: ""
+                        expiredDate: ""
+
+  /advancements/meritBadges/{meritBadgeId}/requirements:
+    get:
+      tags: [Advancement]
+      operationId: getMeritBadgeRequirements
+      summary: Get a merit badge's requirements
+      description: >-
+        Returns the current requirements version for a merit badge.
+        Requirements are a flat list; nest them using `parentRequirementId`
+        and order them by `sortOrder`.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/MeritBadgeId"
+      responses:
+        "200":
+          description: The merit badge's current requirements
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritBadgeRequirements"
+              example:
+                meritBadgeId: "3"
+                meritBadgeName: American Business
+                version: "2019"
+                versionId: "282"
+                versionEffectiveDt: "2019-01-01"
+                versionExpiryDt: ""
+                eagleRequired: "False"
+                imageUrl50: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_50.png
+                imageUrl100: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_100.png
+                imageUrl200: https://d1kn0x9vzr5n76.cloudfront.net/images/meritbadges/3_200.png
+                requirements:
+                  - id: "8386"
+                    name: "Do the following:"
+                    listNumber: "1."
+                    requirementNumber: ""
+                    sortOrder: "1"
+                    childrenRequired: "5"
+                    required: "False"
+                    parentRequirementId: ""
+                    daysRequired: ""
+                    counselorApproval: "False"
+                    footer: ""
+                  - id: "8387"
+                    name: Explain four features of the free enterprise system in the United States. ...
+                    listNumber: (a)
+                    requirementNumber: 1a
+                    sortOrder: "1.1"
+                    childrenRequired: ""
+                    required: "True"
+                    parentRequirementId: "8386"
+                    daysRequired: ""
+                    counselorApproval: "False"
+                    footer: ""
+        "404":
+          description: No merit badge exists with that ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: C404
+                message: Not Found
+                errorDesc: "Merit Badge not found, verify that the meritBadgeId belongs to an existent merit badge - meritBadgeId: 999999"
+
+  /organizations/v2/zip/{zipCode}/council:
+    get:
+      tags: [Organizations]
+      operationId: getCouncilByZip
+      summary: Get the council serving a ZIP code
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/ZipCode"
+      responses:
+        "200":
+          description: The council that serves the ZIP code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Council"
+              example:
+                councilClass: "100"
+                councilName: Circle Ten
+                councilNumber: "571"
+                zipCode: "75038"
+                previousCouncilNumber: ""
+                primaryAddress:
+                  address1: 8605 Harry Hines Blvd
+                  address2: ""
+                  address3: ""
+                  city: Dallas
+                  county: DALLAS
+                  zipCode: "75235"
+                  zipCodeEx: "3014"
+                  state: TEXAS
+                  country: USA
+                primaryPhone:
+                  country: USA
+                  countryCode: ""
+                  areaCode: "214"
+                  prefix: "902"
+                  lineNumber: "6700"
+                  extension: ""
+                primaryEmail:
+                  email: ""
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    MeritBadge:
+      type: object
+      description: >-
+        All values are strings. Dates are `YYYY-MM-DD` or an empty string,
+        and booleans are the strings `"True"` / `"False"`.
+      required:
+        - id
+        - categoryId
+        - category
+        - bsaNumber
+        - name
+        - shortName
+        - description
+        - image
+        - eagleRequired
+        - centennial
+        - dateCreated
+        - dateDiscontinued
+        - lastUpdated
+        - adminNotes
+        - worksheetDOC
+        - worksheetPDF
+        - bsaPamphletNumber
+        - bsaPamphletEdition
+        - bsaPamphletImage
+        - bsaEmblemNumber
+        - bsaEmblemImage
+        - bsaRequirements
+        - pageURL
+        - searchKeywords
+        - sku
+        - price
+        - priceLastUpdated
+        - imageUrl50
+        - imageUrl100
+        - imageUrl200
+        - versions
+      properties:
+        id:
+          type: string
+          examples: ["3"]
+        categoryId:
+          type: string
+          examples: ["3"]
+        category:
+          type: string
+          examples: [Business and Industry]
+        bsaNumber:
+          type: string
+          examples: ["15"]
+        name:
+          type: string
+          examples: [American Business]
+        shortName:
+          type: string
+          examples: [Amer. Business]
+        description:
+          type: string
+          description: Usually empty
+        image:
+          type: string
+          description: Image file name
+          examples: [15_150.png]
+        eagleRequired:
+          $ref: "#/components/schemas/StringBoolean"
+        centennial:
+          $ref: "#/components/schemas/StringBoolean"
+        dateCreated:
+          $ref: "#/components/schemas/StringDate"
+        dateDiscontinued:
+          $ref: "#/components/schemas/StringDate"
+        lastUpdated:
+          $ref: "#/components/schemas/StringDate"
+        adminNotes:
+          type: string
+          description: Internal free-text notes
+        worksheetDOC:
+          type: string
+        worksheetPDF:
+          type: string
+          description: URL of a worksheet PDF, or empty
+        bsaPamphletNumber:
+          type: string
+          examples: ["35850"]
+        bsaPamphletEdition:
+          type: string
+          examples: ["2002"]
+        bsaPamphletImage:
+          type: string
+          examples: [3.jpg]
+        bsaEmblemNumber:
+          type: string
+        bsaEmblemImage:
+          type: string
+        bsaRequirements:
+          type: string
+          description: URL of the requirements page, or empty
+        pageURL:
+          type: string
+          examples: [american-business-merit-badge-requirements.asp]
+        searchKeywords:
+          type: string
+        sku:
+          type: string
+          description: Scout Shop SKU for the pamphlet
+          examples: ["659930"]
+        price:
+          type: string
+          description: Pamphlet price in USD, or empty
+          examples: ["3.99"]
+        priceLastUpdated:
+          $ref: "#/components/schemas/StringDate"
+        imageUrl50:
+          type: string
+          format: uri
+        imageUrl100:
+          type: string
+          format: uri
+        imageUrl200:
+          type: string
+          format: uri
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeritBadgeVersion"
+
+    MeritBadgeRequirements:
+      type: object
+      required:
+        - meritBadgeId
+        - meritBadgeName
+        - version
+        - versionId
+        - versionEffectiveDt
+        - versionExpiryDt
+        - eagleRequired
+        - imageUrl50
+        - imageUrl100
+        - imageUrl200
+        - requirements
+      properties:
+        meritBadgeId:
+          type: string
+          examples: ["3"]
+        meritBadgeName:
+          type: string
+          examples: [American Business]
+        version:
+          type: string
+          description: Requirements version year
+          examples: ["2019"]
+        versionId:
+          type: string
+          examples: ["282"]
+        versionEffectiveDt:
+          $ref: "#/components/schemas/StringDate"
+        versionExpiryDt:
+          $ref: "#/components/schemas/StringDate"
+        eagleRequired:
+          $ref: "#/components/schemas/StringBoolean"
+        imageUrl50:
+          type: string
+          format: uri
+        imageUrl100:
+          type: string
+          format: uri
+        imageUrl200:
+          type: string
+          format: uri
+        requirements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Requirement"
+
+    Requirement:
+      type: object
+      required:
+        - id
+        - name
+        - listNumber
+        - requirementNumber
+        - sortOrder
+        - childrenRequired
+        - required
+        - parentRequirementId
+        - daysRequired
+        - counselorApproval
+        - footer
+      properties:
+        id:
+          type: string
+          examples: ["8387"]
+        name:
+          type: string
+          description: Requirement text. Often contains HTML (links, `<details>` blocks).
+        listNumber:
+          type: string
+          description: Display label, e.g. `1.` or `(a)`
+          examples: ["1.", "(a)"]
+        requirementNumber:
+          type: string
+          description: Short identifier, e.g. `1a`. Empty on some parent requirements.
+          examples: [1a]
+        sortOrder:
+          type: string
+          description: Dotted sort key, e.g. `1` for a parent and `1.1` for its first child
+          examples: ["1", "1.1"]
+        childrenRequired:
+          type: string
+          description: Number of child requirements that must be completed, or empty
+          examples: ["5"]
+        required:
+          $ref: "#/components/schemas/StringBoolean"
+        parentRequirementId:
+          type: string
+          description: "`id` of the parent requirement, or empty for top-level requirements"
+          examples: ["8386"]
+        daysRequired:
+          type: string
+        counselorApproval:
+          $ref: "#/components/schemas/StringBoolean"
+        footer:
+          type: string
+
+    MeritBadgeVersion:
+      type: object
+      required:
+        [versionId, version, versionEffectiveDt, versionExpiryDt, expiredDate]
+      properties:
+        versionId:
+          type: string
+          examples: ["282"]
+        version:
+          type: string
+          description: Requirements version year
+          examples: ["2019"]
+        versionEffectiveDt:
+          $ref: "#/components/schemas/StringDate"
+        versionExpiryDt:
+          $ref: "#/components/schemas/StringDate"
+        expiredDate:
+          $ref: "#/components/schemas/StringDate"
+
+    StringBoolean:
+      type: string
+      enum: ["True", "False"]
+
+    StringDate:
+      type: string
+      description: Date as `YYYY-MM-DD`, or an empty string if not set
+      pattern: "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+
+    Council:
+      type: object
+      properties:
+        councilClass:
+          type: string
+          examples: ["100"]
+        councilName:
+          type: string
+          examples: [Circle Ten]
+        councilNumber:
+          type: string
+          examples: ["571"]
+        zipCode:
+          type: string
+          description: The ZIP code that was looked up
+          examples: ["75038"]
+        previousCouncilNumber:
+          type: string
+        primaryAddress:
+          $ref: "#/components/schemas/Address"
+        primaryPhone:
+          $ref: "#/components/schemas/Phone"
+        primaryEmail:
+          $ref: "#/components/schemas/Email"
+
+    Address:
+      type: object
+      properties:
+        address1:
+          type: string
+        address2:
+          type: string
+        address3:
+          type: string
+        city:
+          type: string
+        county:
+          type: string
+        zipCode:
+          type: string
+          description: 5-digit ZIP code
+        zipCodeEx:
+          type: string
+          description: ZIP+4 extension
+        state:
+          type: string
+          description: Full state name, upper case
+          examples: [TEXAS]
+        country:
+          type: string
+          examples: [USA]
+
+    Phone:
+      type: object
+      properties:
+        country:
+          type: string
+        countryCode:
+          type: string
+        areaCode:
+          type: string
+        prefix:
+          type: string
+        lineNumber:
+          type: string
+        extension:
+          type: string
+
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          examples: [M404]
+        message:
+          type: string
+          examples: [Not Found]
+        errorDesc:
+          type: string
+          examples: [Council not found]
+
+  parameters:
+    MeritBadgeId:
+      name: meritBadgeId
+      in: path
+      required: true
+      description: Merit badge `id` from the merit badge list (not `bsaNumber`)
+      schema:
+        type: string
+        pattern: "^[0-9]+$"
+        examples: ["3"]
+
+    ZipCode:
+      name: zipCode
+      in: path
+      required: true
+      description: 5-digit US ZIP code
+      schema:
+        type: string
+        pattern: "^[0-9]{5}$"
+        examples: ["75038"]
+
+  responses:
+    BadRequest:
+      description: The request was invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            errorCode: M400
+            message: Bad Request
+            errorDesc: uri parameter zipCode is not a valid zipCode
+    NotFound:
+      description: The resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            errorCode: M404
+            message: Not Found
+            errorDesc: Council not found
