@@ -476,6 +476,54 @@ paths:
                 message: Not Found
                 errorDesc: Record is not found. id= 999999
 
+  /lookups/advancements/calendarEventTypes:
+    get:
+      tags: [Lookups]
+      operationId: listCalendarEventTypes
+      summary: List calendar event types
+      description: >-
+        Returns all calendar event types, including expired ones, as an array
+        sorted by `id`, with no paging.
+      security: []
+      responses:
+        "200":
+          description: An array of every calendar event type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalendarEventType"
+              example:
+                - id: 4
+                  name: Campout
+                  shortCode: COT
+                  pack: false
+                  den: false
+                  troop: true
+                  patrol: true
+                  crew: true
+                  ship: true
+                  post: true
+                  club: true
+                  lab: true
+                  effectiveDt: "2014-01-01"
+                  expiryDt: null
+                - id: 26
+                  name: None
+                  shortCode: NNE
+                  pack: true
+                  den: true
+                  troop: true
+                  patrol: true
+                  crew: true
+                  ship: true
+                  post: true
+                  club: true
+                  lab: true
+                  effectiveDt: "2014-01-01"
+                  expiryDt: "2022-11-30"
+
   /lookups/advancements/positions:
     get:
       tags: [Lookups]
@@ -1202,6 +1250,71 @@ components:
         id:
           type: string
           examples: ["55"]
+
+    CalendarEventType:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - shortCode
+        - pack
+        - den
+        - troop
+        - patrol
+        - crew
+        - ship
+        - post
+        - club
+        - lab
+        - effectiveDt
+        - expiryDt
+      properties:
+        id:
+          type: integer
+          examples: [4]
+        name:
+          type: string
+          examples: [Campout]
+        shortCode:
+          type: string
+          examples: [COT]
+        pack:
+          type: boolean
+          description: Whether the event type applies to packs
+        den:
+          type: boolean
+          description: Whether the event type applies to dens
+        troop:
+          type: boolean
+          description: Whether the event type applies to troops
+        patrol:
+          type: boolean
+          description: Whether the event type applies to patrols
+        crew:
+          type: boolean
+          description: Whether the event type applies to crews
+        ship:
+          type: boolean
+          description: Whether the event type applies to ships
+        post:
+          type: boolean
+          description: Whether the event type applies to posts
+        club:
+          type: boolean
+          description: Whether the event type applies to clubs
+        lab:
+          type: boolean
+          description: Whether the event type applies to labs
+        effectiveDt:
+          type: string
+          format: date
+          examples: ["2014-01-01"]
+        expiryDt:
+          type: [string, "null"]
+          format: date
+          description: Date the event type expired, or `null` if it is current
+          examples: ["2022-11-30", null]
 
     Position:
       type: object

@@ -2,5 +2,6 @@
 # See https://redocly.com/docs/cli/ for more information.
 openapi.yaml:
   operation-4xx-response:
+    - '#/paths/~1lookups~1advancements~1calendarEventTypes/get/responses'
     - '#/paths/~1lookups~1advancements~1positions/get/responses'
     - '#/paths/~1lookups~1advancements~1swimmingClassification/get/responses'

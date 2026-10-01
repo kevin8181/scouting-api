@@ -138,6 +138,13 @@ workflows:
         successCriteria:
           - condition: $statusCode == 404
 
+  - workflowId: calendar-event-types
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listCalendarEventTypes
+        successCriteria:
+          - condition: $statusCode == 200
+
   - workflowId: positions
     steps:
       - stepId: list
