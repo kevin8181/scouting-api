@@ -1155,6 +1155,104 @@ paths:
                   expiryDate: "2025-05-31"
                   functionalPositionFlag: false
 
+  /lookups/person/schools:
+    get:
+      tags: [Lookups]
+      operationId: listSchools
+      summary: Search schools
+      description: >-
+        Returns schools whose name matches `name`, as an array sorted by
+        `name`. Filters combine with AND, and a search that matches nothing
+        returns an empty list. At most 100,000 schools are returned.
+      security: []
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: >-
+            Case-insensitive search for schools whose `name` contains this
+            text. Leading and trailing whitespace is ignored, but counts toward
+            the length limits. `%` matches any run of characters and `_` any
+            single character, so `%%` matches every school.
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 50
+            examples: [lincoln]
+        - name: state
+          in: query
+          description: >-
+            Return only schools whose `stateCode` is exactly this value,
+            ignoring case and trailing spaces
+          schema:
+            type: string
+            minLength: 2
+            examples: [MI]
+        - name: city
+          in: query
+          description: >-
+            Return only schools whose `city` contains this text, ignoring case.
+            `%` and `_` are wildcards, as in `name`.
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 50
+            examples: [ionia]
+        - name: zip
+          in: query
+          description: >-
+            Return only schools whose `zip` is exactly this value. Matches the
+            stored value, so a ZIP code stored without its leading zero must
+            be given without it.
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 5
+            examples: ["48846"]
+      responses:
+        "200":
+          description: Matching schools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/School"
+              example:
+                - zip: "48846"
+                  address: 380 EAST TUTTLE RD
+                  city: IONIA
+                  phone: null
+                  district: null
+                  name: AA RATHER SCHOOL
+                  typeId: 8
+                  stateCode: "MI "
+                  id: 36294
+                - zip: "85042"
+                  address: 7050 S. 24TH STREET
+                  city: PHOENIX
+                  phone: "6022438004"
+                  district: ARIZONA AGRIBUSINESS & EQUINE CENTER  INC
+                  name: AAEC - SMCC CAMPUS
+                  typeId: 1
+                  stateCode: AZ
+                  id: 7870
+        "400":
+          description: >-
+            `name` is missing (`M400`) or outside its length limits (`C400`),
+            or another filter is too short or too long, or a parameter is
+            repeated (`M400`)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: C400
+                message: Bad Request
+                errorDesc: >-
+                  Invalid request - "name" length must be at least 2
+                  characters long
+
   /lookups/person/titlePrefixes:
     get:
       tags: [Lookups]
@@ -2433,6 +2531,57 @@ components:
       description: An `id` from the person position list
       pattern: "^[0-9]+$"
       examples: ["482"]
+
+    School:
+      type: object
+      additionalProperties: false
+      required:
+        - zip
+        - address
+        - city
+        - phone
+        - district
+        - name
+        - typeId
+        - stateCode
+        - id
+      properties:
+        zip:
+          type: [string, "null"]
+          description: >-
+            Usually a five-digit ZIP code, but leading zeros are sometimes
+            dropped, and a few records hold other text
+          examples: ["48846", "7087", null]
+        address:
+          type: [string, "null"]
+          examples: [380 EAST TUTTLE RD, null]
+        city:
+          type: [string, "null"]
+          examples: [IONIA, null]
+        phone:
+          type: [string, "null"]
+          description: Usually ten digits with no punctuation
+          examples: ["6022438004", null]
+        district:
+          type: [string, "null"]
+          examples: [SAN JOSE UNIFIED, null]
+        name:
+          type: string
+          description: Not unique
+          examples: [AA RATHER SCHOOL]
+        typeId:
+          type: integer
+          examples: [1, 8, 44]
+        stateCode:
+          type: [string, "null"]
+          description: >-
+            Usually a two-letter state or province code, sometimes with a
+            trailing space. A few records hold other text, such as a city
+            name.
+          examples: [AZ, "MI ", null]
+        id:
+          type: integer
+          examples: [36294]
 
     TitlePrefix:
       type: object

@@ -273,6 +273,25 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
 
+  - workflowId: schools
+    steps:
+      - stepId: search
+        operationId: $sourceDescriptions.api.listSchools
+        parameters:
+          - name: name
+            in: query
+            value: aa
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: search-name-too-short
+        operationId: $sourceDescriptions.api.listSchools
+        parameters:
+          - name: name
+            in: query
+            value: a
+        successCriteria:
+          - condition: $statusCode == 400
+
   - workflowId: titlePrefixes
     steps:
       - stepId: list
