@@ -27,6 +27,8 @@ servers:
 tags:
   - name: Advancement
     description: Ranks, merit badges, and other advancement
+  - name: Lookups
+    description: Reference lists, such as countries
 
 paths:
   /advancements/meritBadges:
@@ -366,6 +368,59 @@ paths:
                 errorCode: C404
                 message: Not Found
                 errorDesc: "Ranks information not found - rankId: 999999"
+
+  /lookups/address/countries:
+    get:
+      tags: [Lookups]
+      operationId: listCountries
+      summary: List countries
+      description: >-
+        Returns all countries as an array sorted by `short`, with no paging.
+        With `id`, returns that one country as an object instead of an array.
+        Unknown query parameters are ignored.
+      security: []
+      parameters:
+        - name: id
+          in: query
+          description: >-
+            Return only the country with this `id`, as a single object rather
+            than an array
+          schema:
+            type: integer
+            examples: [616]
+      responses:
+        "200":
+          description: >-
+            An array of every country, or a single country object when `id` is
+            given
+          content:
+            application/json:
+              schema:
+                type: [array, object]
+                anyOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Country"
+                  - $ref: "#/components/schemas/Country"
+              example:
+                - name: Africa
+                  short: AB
+                  id: "388"
+                - name: Ascension Island
+                  short: AC
+                  id: "389"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          description: No country exists with that `id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: M404
+                message: Not Found
+                errorDesc: Record is not found. id= 999999
 
 components:
   schemas:
@@ -919,6 +974,24 @@ components:
           type: string
         linkedAwardId:
           type: string
+
+    Country:
+      type: object
+      additionalProperties: false
+      required: [name, short, id]
+      properties:
+        name:
+          type: string
+          examples: [USA]
+        short:
+          type: string
+          description: >-
+            Two-letter code. Usually the ISO 3166-1 alpha-2 code, but not
+            always (`KN` is Slovakia).
+          examples: [US]
+        id:
+          type: string
+          examples: ["616"]
 
     StringBoolean:
       type: string
