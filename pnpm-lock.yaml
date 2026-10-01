@@ -14,6 +14,9 @@ importers:
       prettier:
         specifier: ^3.9.9
         version: 3.9.9
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
 
 packages:
 
@@ -27,8 +30,15 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  yaml@2.9.1:
+    resolution: {integrity: sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
+
 snapshots:
 
   '@redocly/cli@2.57.0': {}
 
   prettier@3.9.9: {}
+
+  yaml@2.9.1: {}

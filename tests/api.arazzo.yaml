@@ -1,0 +1,58 @@
+arazzo: 1.1.0
+info:
+  title: Scouting America API contract tests
+  version: 0.1.0
+sourceDescriptions:
+  - name: api
+    type: openapi
+    url: ../openapi.yaml
+workflows:
+  - workflowId: council-by-zip
+    steps:
+      - stepId: found
+        operationId: $sourceDescriptions.api.getCouncilByZip
+        parameters:
+          - name: zipCode
+            in: path
+            value: "75038"
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: invalid-zip
+        operationId: $sourceDescriptions.api.getCouncilByZip
+        parameters:
+          - name: zipCode
+            in: path
+            value: "7503"
+        successCriteria:
+          - condition: $statusCode == 400
+      - stepId: not-found
+        operationId: $sourceDescriptions.api.getCouncilByZip
+        parameters:
+          - name: zipCode
+            in: path
+            value: "00000"
+        successCriteria:
+          - condition: $statusCode == 404
+
+  - workflowId: merit-badges
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listMeritBadges
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: requirements
+        operationId: $sourceDescriptions.api.getMeritBadgeRequirements
+        parameters:
+          - name: meritBadgeId
+            in: path
+            value: "3"
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: requirements-not-found
+        operationId: $sourceDescriptions.api.getMeritBadgeRequirements
+        parameters:
+          - name: meritBadgeId
+            in: path
+            value: "999999"
+        successCriteria:
+          - condition: $statusCode == 404

@@ -1,0 +1,40 @@
+name: Contract tests
+
+# Checks the spec against the live API. Runs weekly to catch changes to the
+# API itself, and when the spec, tests, or tooling change.
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+  push:
+    branches: [main]
+    paths: &paths
+      - openapi.yaml
+      - tests/**
+      - package.json
+      - pnpm-lock.yaml
+      - .nvmrc
+      - .github/workflows/contract-tests.yml
+  pull_request:
+    paths: *paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Uses the pnpm version from packageManager in package.json
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm test
