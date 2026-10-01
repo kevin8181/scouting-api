@@ -39,10 +39,9 @@ paths:
       operationId: listMeritBadges
       summary: List merit badges
       description: >-
-        Returns merit badges in one response, with no paging. Pass a badge's
-        `id` to the requirements endpoint to get its requirements. Filters
-        combine with AND. A filter value that matches nothing returns an empty
-        list.
+        Returns merit badges. Pass a badge's `id` to the requirements endpoint
+        to get its requirements. Filters combine with AND. A filter value that
+        matches nothing returns an empty list.
       security: []
       parameters:
         - $ref: "#/components/parameters/CacheControl"
@@ -196,11 +195,10 @@ paths:
       operationId: listRanks
       summary: List ranks
       description: >-
-        Returns ranks across all programs, one item per requirements version,
-        with no paging. A rank with several versions appears once per
-        version, sharing `id` but with different `versionId`.
-        Filters combine with AND. A filter value that matches nothing returns
-        an empty list.
+        Returns ranks across all programs, one item per requirements version.
+        A rank with several versions appears once per version, sharing `id`
+        but with different `versionId`. Filters combine with AND. A filter
+        value that matches nothing returns an empty list.
       security: []
       parameters:
         - $ref: "#/components/parameters/CacheControl"
@@ -377,7 +375,7 @@ paths:
       operationId: listCountries
       summary: List countries
       description: >-
-        Returns all countries as an array sorted by `short`, with no paging.
+        Returns all countries as an array sorted by `short`.
         With `id`, returns that one country as an object instead of an array.
       security: []
       parameters:
@@ -430,8 +428,8 @@ paths:
       summary: List states
       description: >-
         Returns all US states, DC, territories, and military (APO) codes as an
-        array sorted by `short`, with no paging. With `id`, returns that one
-        state as an object instead of an array.
+        array sorted by `short`. With `id`, returns that one state as an
+        object instead of an array.
       security: []
       parameters:
         - name: id
@@ -476,6 +474,67 @@ paths:
                 message: Not Found
                 errorDesc: Record is not found. id= 999999
 
+  /lookups/advancements/activityCategories:
+    get:
+      tags: [Lookups]
+      operationId: listActivityCategories
+      summary: List activity categories
+      description: >-
+        Returns all activity categories, including expired ones, as an array
+        sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every activity category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityCategory"
+              example:
+                - id: 7
+                  name: Veterans
+                  description: Veterans
+                  actTypeId: 1
+                  effectiveDt: "1910-01-01"
+                  expiryDt: ""
+                - id: 17
+                  name: Building/construction
+                  description: Building/construction
+                  actTypeId: 5
+                  effectiveDt: "1910-01-01"
+                  expiryDt: "2022-10-19"
+
+  /lookups/advancements/activityTypes:
+    get:
+      tags: [Lookups]
+      operationId: listActivityTypes
+      summary: List activity types
+      description: >-
+        Returns all activity types as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every activity type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityType"
+              example:
+                - id: 1
+                  description: ServiceProjects
+                - id: 2
+                  description: Camping
+                - id: 3
+                  description: Hikes
+                - id: 4
+                  description: Long Cruise
+                - id: 5
+                  description: Eagle Service Project
+
   /lookups/advancements/calendarEventTypes:
     get:
       tags: [Lookups]
@@ -483,7 +542,7 @@ paths:
       summary: List calendar event types
       description: >-
         Returns all calendar event types, including expired ones, as an array
-        sorted by `id`, with no paging.
+        sorted by `id`.
       security: []
       responses:
         "200":
@@ -531,7 +590,7 @@ paths:
       summary: List positions
       description: >-
         Returns all positions, including retired ones, as an array sorted by
-        `id`, with no paging.
+        `id`.
       security: []
       responses:
         "200":
@@ -569,8 +628,7 @@ paths:
       operationId: listSwimmingClassifications
       summary: List swimming classifications
       description: >-
-        Returns all swimming classifications as an array sorted by `id`, with
-        no paging.
+        Returns all swimming classifications as an array sorted by `id`.
       security: []
       responses:
         "200":
@@ -604,10 +662,10 @@ paths:
       operationId: listYouthLeadershipPositions
       summary: List youth leadership positions
       description: >-
-        Returns youth leadership positions as an array sorted by `id`, with no
-        paging. These are a subset of the positions list, sharing its `id`
-        values, but with native JSON types: numbers and booleans instead of
-        strings, and `null` where the positions list has an empty string.
+        Returns youth leadership positions as an array sorted by `id`. These
+        are a subset of the positions list, sharing its `id` values, but with
+        native JSON types: numbers and booleans instead of strings, and `null`
+        where the positions list has an empty string.
       security: []
       parameters:
         - name: unitTypeId
@@ -1250,6 +1308,48 @@ components:
         id:
           type: string
           examples: ["55"]
+
+    ActivityCategory:
+      type: object
+      additionalProperties: false
+      required: [id, name, description, actTypeId, effectiveDt, expiryDt]
+      properties:
+        id:
+          type: integer
+          examples: [7]
+        name:
+          type: string
+          description: Not unique across activity types
+          examples: [Veterans]
+        description:
+          type: string
+          description: >-
+            Usually the same as `name`, but can be longer and contain line
+            breaks
+          examples: [Veterans]
+        actTypeId:
+          type: integer
+          description: Activity type `id` from the activity type list
+          examples: [1]
+        effectiveDt:
+          type: string
+          format: date
+          examples: ["1910-01-01"]
+        expiryDt:
+          $ref: "#/components/schemas/StringDate"
+
+    ActivityType:
+      type: object
+      additionalProperties: false
+      required: [id, description]
+      properties:
+        id:
+          type: integer
+          examples: [2]
+        description:
+          type: string
+          description: Display name
+          examples: [Camping]
 
     CalendarEventType:
       type: object
