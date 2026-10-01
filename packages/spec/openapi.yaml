@@ -28,7 +28,7 @@ tags:
   - name: Advancement
     description: Ranks, merit badges, and other advancement
   - name: Lookups
-    description: Reference lists, such as countries
+    description: Reference lists, such as countries and states
 
 paths:
   /advancements/meritBadges:
@@ -413,6 +413,60 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "404":
           description: No country exists with that `id`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: M404
+                message: Not Found
+                errorDesc: Record is not found. id= 999999
+
+  /lookups/address/states:
+    get:
+      tags: [Lookups]
+      operationId: listStates
+      summary: List states
+      description: >-
+        Returns all US states, DC, territories, and military (APO) codes as an
+        array sorted by `short`, with no paging. With `id`, returns that one
+        state as an object instead of an array. Unknown query parameters are
+        ignored.
+      security: []
+      parameters:
+        - name: id
+          in: query
+          description: >-
+            Return only the state with this `id`, as a single object rather
+            than an array
+          schema:
+            type: integer
+            examples: [55]
+      responses:
+        "200":
+          description: >-
+            An array of every state, or a single state object when `id` is
+            given
+          content:
+            application/json:
+              schema:
+                type: [array, object]
+                anyOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/State"
+                  - $ref: "#/components/schemas/State"
+              example:
+                - name: AA-APO AA
+                  short: AA
+                  id: "1"
+                - name: AE-APO AE
+                  short: AE
+                  id: "2"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          description: No state exists with that `id`
           content:
             application/json:
               schema:
@@ -992,6 +1046,23 @@ components:
         id:
           type: string
           examples: ["616"]
+
+    State:
+      type: object
+      additionalProperties: false
+      required: [name, short, id]
+      properties:
+        name:
+          type: string
+          description: The `short` code, a hyphen, and the name in uppercase.
+          examples: [TX-TEXAS]
+        short:
+          type: string
+          description: Two-letter USPS code.
+          examples: [TX]
+        id:
+          type: string
+          examples: ["55"]
 
     StringBoolean:
       type: string

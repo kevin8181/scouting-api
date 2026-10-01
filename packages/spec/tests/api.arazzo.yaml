@@ -114,3 +114,26 @@ workflows:
             value: 999999
         successCriteria:
           - condition: $statusCode == 404
+
+  - workflowId: states
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listStates
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: invalid-id
+        operationId: $sourceDescriptions.api.listStates
+        parameters:
+          - name: id
+            in: query
+            value: abc
+        successCriteria:
+          - condition: $statusCode == 400
+      - stepId: not-found
+        operationId: $sourceDescriptions.api.listStates
+        parameters:
+          - name: id
+            in: query
+            value: 999999
+        successCriteria:
+          - condition: $statusCode == 404
