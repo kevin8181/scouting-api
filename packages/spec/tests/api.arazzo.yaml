@@ -201,3 +201,17 @@ workflows:
             value: 999999
         successCriteria:
           - condition: $statusCode == 400
+
+  - workflowId: communication-classifications
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listCommunicationClassifications
+        successCriteria:
+          - condition: $statusCode == 200
+
+  - workflowId: communication-types
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listCommunicationTypes
+        successCriteria:
+          - condition: $statusCode == 200

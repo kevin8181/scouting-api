@@ -779,6 +779,69 @@ paths:
                   Invalid request - "unitTypeId" must be valid in lookup
                   "unittypes"
 
+  /lookups/communications/classifications:
+    get:
+      tags: [Lookups]
+      operationId: listCommunicationClassifications
+      summary: List communication classifications
+      description: >-
+        Returns the groups communication types fall into, such as phone and
+        email, as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every communication classification
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommunicationClassification"
+              example:
+                - id: "1"
+                  name: Phone
+                - id: "2"
+                  name: Web
+                - id: "3"
+                  name: Email
+                - id: "4"
+                  name: Social Media
+
+  /lookups/communications/communicationTypes:
+    get:
+      tags: [Lookups]
+      operationId: listCommunicationTypes
+      summary: List communication types
+      description: >-
+        Returns the kinds of contact entry a person can have, such as a home
+        email or mobile phone, as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every communication type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommunicationType"
+              example:
+                - id: "1"
+                  classificationId: "3"
+                  name: Home Email
+                  short: EMAL
+                  doNotDisplay: "False"
+                - id: "4"
+                  classificationId: "1"
+                  name: "Mobile "
+                  short: M
+                  doNotDisplay: "False"
+                - id: "15"
+                  classificationId: "4"
+                  name: Facebook
+                  short: FB
+                  doNotDisplay: "True"
+
 components:
   schemas:
     MeritBadge:
@@ -1707,6 +1770,45 @@ components:
                   Unit type `id` from the unit type list, as a number instead
                   of a string
                 examples: [2]
+
+    CommunicationClassification:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          $ref: "#/components/schemas/CommunicationClassificationId"
+        name:
+          type: string
+          examples: [Phone]
+
+    CommunicationClassificationId:
+      type: string
+      description: An `id` from the communication classification list
+      pattern: "^[0-9]+$"
+      examples: ["1"]
+
+    CommunicationType:
+      type: object
+      additionalProperties: false
+      required: [id, classificationId, name, short, doNotDisplay]
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9]+$"
+          examples: ["4"]
+        classificationId:
+          $ref: "#/components/schemas/CommunicationClassificationId"
+        name:
+          type: string
+          description: Display name, which can end in a trailing space
+          examples: ["Mobile ", Home Email]
+        short:
+          type: string
+          description: Short code
+          examples: [M, EMAL]
+        doNotDisplay:
+          $ref: "#/components/schemas/StringBoolean"
 
     StringBoolean:
       type: string
