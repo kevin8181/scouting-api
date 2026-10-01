@@ -25,7 +25,7 @@ This repo is an unofficial OpenAPI description of an API we don't control. The l
 Checks are meant to be strict. When one fails, fix the spec or tests to satisfy it. Loosen a rule in `redocly.yaml` only when it conflicts with real API behavior, and add a comment saying why.
 
 - Lint warnings are errors (`recommended-strict` plus extra rules in `redocly.yaml`).
-- `scripts/check-coverage.mjs` (part of `pnpm lint`) fails if any operation or documented status code has no contract test.
+- `scripts/check-coverage.ts` (part of `pnpm lint`) fails if any operation or documented status code has no contract test.
 - Knip fails on unused files, dependencies, and unused ignore entries.
 - One-off lint exceptions go in `.redocly.lint-ignore.yaml`. Regenerate it with `--generate-ignore-file`.
 

@@ -2,6 +2,7 @@
 	"name": "scouting-api",
 	"version": "0.1.0",
 	"private": true,
+	"type": "module",
 	"description": "Unofficial, community-maintained description of the public Scouting America API at api.scouting.org.",
 	"keywords": [
 		"scouting",
@@ -22,20 +23,23 @@
 		"node": ">=24"
 	},
 	"scripts": {
-		"dev": "node scripts/dev.mjs",
-		"lint": "redocly lint openapi.yaml tests/api.arazzo.yaml && node scripts/check-coverage.mjs",
+		"dev": "node scripts/dev.ts",
+		"lint": "redocly lint openapi.yaml tests/api.arazzo.yaml && node scripts/check-coverage.ts",
 		"build": "redocly build-docs openapi.yaml -o dist/index.html",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
+		"typecheck": "tsc",
 		"knip": "knip --treat-config-hints-as-errors",
-		"check": "pnpm format && pnpm lint && pnpm knip",
+		"check": "pnpm format && pnpm lint && pnpm typecheck && pnpm knip",
 		"test": "redocly respect tests/api.arazzo.yaml"
 	},
 	"packageManager": "pnpm@10.24.0",
 	"devDependencies": {
 		"@redocly/cli": "^2.57.0",
+		"@types/node": "^24.19.0",
 		"knip": "^6.39.0",
 		"prettier": "^3.9.9",
+		"typescript": "^7.0.2",
 		"yaml": "^2.9.1"
 	}
 }

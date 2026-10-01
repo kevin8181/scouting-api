@@ -2,21 +2,21 @@
 // Open pages reload themselves after each rebuild.
 import { execFile } from "node:child_process";
 import { readFile, watch } from "node:fs/promises";
-import { createServer } from "node:http";
+import { createServer, type ServerResponse } from "node:http";
 
 const SPEC = "openapi.yaml";
 const OUT = "dist/index.html";
-const PORT = Number(process.env.PORT ?? 8080);
+const PORT = Number(process.env["PORT"] ?? 8080);
 const RELOAD_SCRIPT = `<script>new EventSource("/__reload").onmessage = () => location.reload();</script>`;
 
-const clients = new Set();
+const clients = new Set<ServerResponse>();
 
-function build() {
+function build(): Promise<boolean> {
 	return new Promise((resolve) => {
 		execFile(
 			"redocly",
 			["build-docs", SPEC, "-o", OUT],
-			(error, stdout, stderr) => {
+			(error, _stdout, stderr) => {
 				if (error) console.error(stderr || error.message);
 				else console.log(`Rebuilt ${OUT}`);
 				resolve(!error);
@@ -52,7 +52,7 @@ await build();
 server.listen(PORT, () => console.log(`Docs at http://localhost:${PORT}`));
 
 // Editors often emit several events per save, so debounce rebuilds.
-let timer;
+let timer: NodeJS.Timeout | undefined;
 for await (const _ of watch(SPEC)) {
 	clearTimeout(timer);
 	timer = setTimeout(async () => {

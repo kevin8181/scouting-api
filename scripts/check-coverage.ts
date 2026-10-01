@@ -14,12 +14,23 @@ const METHODS = [
 	"head",
 	"patch",
 	"trace",
-];
+] as const;
 
-const spec = parse(await readFile(SPEC, "utf8"));
-const tests = parse(await readFile(TESTS, "utf8"));
+// Only the parts of each document this script reads
+type Operation = { operationId?: string; responses?: Record<string, unknown> };
+type Spec = {
+	paths?: Record<string, Partial<Record<(typeof METHODS)[number], Operation>>>;
+};
+type Step = {
+	operationId?: string;
+	successCriteria?: { condition: string }[];
+};
+type Tests = { workflows?: { steps?: Step[] }[] };
 
-const tested = new Set();
+const spec: Spec = parse(await readFile(SPEC, "utf8"));
+const tests: Tests = parse(await readFile(TESTS, "utf8"));
+
+const tested = new Set<string>();
 for (const workflow of tests.workflows ?? []) {
 	for (const step of workflow.steps ?? []) {
 		const operationId = step.operationId?.split(".").at(-1);
@@ -30,7 +41,7 @@ for (const workflow of tests.workflows ?? []) {
 	}
 }
 
-const missing = [];
+const missing: string[] = [];
 for (const [path, item] of Object.entries(spec.paths ?? {})) {
 	for (const method of METHODS) {
 		const operation = item[method];
