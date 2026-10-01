@@ -34,12 +34,28 @@ workflows:
         successCriteria:
           - condition: $statusCode == 404
 
+  # Steps on cached list endpoints send no-cache. See the CacheControl parameter.
   - workflowId: merit-badges
     steps:
       - stepId: list
         operationId: $sourceDescriptions.api.listMeritBadges
+        parameters:
+          - name: Cache-Control
+            in: header
+            value: no-cache
         successCriteria:
           - condition: $statusCode == 200
+      - stepId: list-invalid-status
+        operationId: $sourceDescriptions.api.listMeritBadges
+        parameters:
+          - name: Cache-Control
+            in: header
+            value: no-cache
+          - name: status
+            in: query
+            value: bogus
+        successCriteria:
+          - condition: $statusCode == 400
       - stepId: requirements
         operationId: $sourceDescriptions.api.getMeritBadgeRequirements
         parameters:
@@ -56,3 +72,25 @@ workflows:
             value: "999999"
         successCriteria:
           - condition: $statusCode == 404
+
+  - workflowId: ranks
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listRanks
+        parameters:
+          - name: Cache-Control
+            in: header
+            value: no-cache
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: invalid-status
+        operationId: $sourceDescriptions.api.listRanks
+        parameters:
+          - name: Cache-Control
+            in: header
+            value: no-cache
+          - name: status
+            in: query
+            value: bogus
+        successCriteria:
+          - condition: $statusCode == 400

@@ -8,6 +8,11 @@ info:
     America API at api.scouting.org. Not affiliated with or endorsed by
     Scouting America. The CC0 license applies to this description and repository only,
     not to the API or its data.
+
+
+    Some list endpoints cache responses without regard to the query string.
+    On those endpoints, send `Cache-Control: no-cache` or query filters may
+    be ignored.
   contact:
     name: scouting-api on GitHub
     url: https://github.com/kevin8181/scouting-api/issues
@@ -32,12 +37,41 @@ paths:
       operationId: listMeritBadges
       summary: List merit badges
       description: >-
-        Returns every merit badge in one response, with no paging. Pass a
-        badge's `id` to the requirements endpoint to get its requirements.
+        Returns merit badges in one response, with no paging. Pass a badge's
+        `id` to the requirements endpoint to get its requirements. Filters
+        combine with AND. A filter value that matches nothing returns an empty
+        list. Unknown query parameters are ignored.
       security: []
+      parameters:
+        - $ref: "#/components/parameters/CacheControl"
+        - name: id
+          in: query
+          description: Return only the merit badge with this `id`
+          schema:
+            type: string
+            examples: ["3"]
+        - name: version
+          in: query
+          description: >-
+            Return only requirements versions from this year. Badges with no
+            matching version are left out.
+          schema:
+            type: string
+            examples: ["2019"]
+        - name: status
+          in: query
+          description: >-
+            Which requirements versions to put in `versions`. `active` (the
+            default) gives each badge's current version and leaves out
+            discontinued badges. `inactive` gives past versions, including those
+            of discontinued badges, and leaves out badges with none.
+            Case-sensitive.
+          schema:
+            type: string
+            enum: [active, inactive]
       responses:
         "200":
-          description: All merit badges
+          description: Matching merit badges
           content:
             application/json:
               schema:
@@ -87,6 +121,8 @@ paths:
                         versionEffectiveDt: "2019-01-01"
                         versionExpiryDt: ""
                         expiredDate: ""
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
 
   /advancements/meritBadges/{meritBadgeId}/requirements:
     get:
@@ -151,6 +187,93 @@ paths:
                 errorCode: C404
                 message: Not Found
                 errorDesc: "Merit Badge not found, verify that the meritBadgeId belongs to an existent merit badge - meritBadgeId: 999999"
+
+  /advancements/ranks:
+    get:
+      tags: [Advancement]
+      operationId: listRanks
+      summary: List ranks
+      description: >-
+        Returns ranks across all programs, one item per requirements version,
+        with no paging. A rank with several versions appears once per
+        version, sharing `id` but with different `versionId`.
+        Filters combine with AND. A filter value that matches nothing returns
+        an empty list.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/CacheControl"
+        - name: id
+          in: query
+          description: Return only versions of the rank with this `id`
+          schema:
+            type: string
+            examples: ["1"]
+        - name: programId
+          in: query
+          description: Return only ranks in this program
+          schema:
+            type: string
+            examples: ["2"]
+        - name: version
+          in: query
+          description: Return only requirements versions from this year
+          schema:
+            type: string
+            examples: ["2022"]
+        - name: status
+          in: query
+          description: >-
+            `active` returns the current requirements version of each rank
+            (some ranks have two current versions). `inactive` returns all other
+            versions. Case-sensitive.
+          schema:
+            type: string
+            enum: [active, inactive]
+      responses:
+        "200":
+          description: Matching rank versions
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [ranks]
+                properties:
+                  ranks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Rank"
+              example:
+                ranks:
+                  - id: "20"
+                    name: Discovery
+                    short: Discovery
+                    reallyShort: Discovery
+                    level: "2"
+                    image: discovery.png
+                    programId: "4"
+                    program: Venturing
+                    searchKeywords: Venturer Rank Award Requirements
+                    lds: "False"
+                    sku: "620502"
+                    price: "2.99"
+                    priceLastUpdated: "2026-09-16"
+                    scoutNet: RV12
+                    versionId: "62"
+                    version: "2020"
+                    header: ""
+                    footer: ""
+                    adminNotes: ""
+                    proofReadDate: ""
+                    active: "True"
+                    expiredDate: ""
+                    disabledOnQuickEntry: "False"
+                    imageUrl50: https://d1kn0x9vzr5n76.cloudfront.net/images/ranks/discovery50.png
+                    imageUrl100: https://d1kn0x9vzr5n76.cloudfront.net/images/ranks/discovery100.png
+                    imageUrl200: https://d1kn0x9vzr5n76.cloudfront.net/images/ranks/discovery200.png
+                    imageUrl400: https://d1kn0x9vzr5n76.cloudfront.net/images/ranks/discovery400.png
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
 
   /organizations/v2/zip/{zipCode}/council:
     get:
@@ -449,6 +572,126 @@ components:
         expiredDate:
           $ref: "#/components/schemas/StringDate"
 
+    Rank:
+      type: object
+      additionalProperties: false
+      description: >-
+        One requirements version of a rank. All values are strings.
+      required:
+        - id
+        - name
+        - short
+        - reallyShort
+        - level
+        - image
+        - programId
+        - program
+        - searchKeywords
+        - lds
+        - sku
+        - price
+        - priceLastUpdated
+        - scoutNet
+        - versionId
+        - version
+        - header
+        - footer
+        - adminNotes
+        - proofReadDate
+        - active
+        - expiredDate
+        - disabledOnQuickEntry
+        - imageUrl50
+        - imageUrl100
+        - imageUrl200
+        - imageUrl400
+      properties:
+        id:
+          type: string
+          description: Rank ID, shared by all versions of the rank
+          examples: ["20"]
+        name:
+          type: string
+          examples: [Discovery]
+        short:
+          type: string
+          description: Shorter name
+          examples: [Discovery]
+        reallyShort:
+          type: string
+          description: Shortest name
+          examples: [Discovery]
+        level:
+          type: string
+          description: >-
+            Position of the rank within its program, starting at `1` (Lion is
+            `0`)
+          examples: ["2"]
+        image:
+          type: string
+          description: Image file name
+          examples: [discovery.png]
+        programId:
+          type: string
+          examples: ["4"]
+        program:
+          type: string
+          description: Program name for `programId`
+          examples: [Cub Scouting, Scouts BSA, Venturing, Sea Scouting]
+        searchKeywords:
+          type: string
+        lds:
+          $ref: "#/components/schemas/StringBoolean"
+        sku:
+          type: string
+          examples: ["620502"]
+        price:
+          type: string
+          description: Price as a decimal string. `"0"` on some old versions.
+          examples: ["2.99"]
+        priceLastUpdated:
+          $ref: "#/components/schemas/StringDate"
+        scoutNet:
+          type: string
+          examples: [RV12]
+        versionId:
+          type: string
+          description: Unique per requirements version
+          examples: ["62"]
+        version:
+          type: string
+          description: Requirements version year
+          examples: ["2020"]
+        header:
+          type: string
+          description: Introductory text, or empty
+        footer:
+          type: string
+          description: Notes, often containing HTML, or empty
+        adminNotes:
+          type: string
+          description: Internal free-text notes
+        proofReadDate:
+          $ref: "#/components/schemas/StringDate"
+        active:
+          $ref: "#/components/schemas/StringBoolean"
+        expiredDate:
+          $ref: "#/components/schemas/StringDate"
+        disabledOnQuickEntry:
+          $ref: "#/components/schemas/StringBoolean"
+        imageUrl50:
+          type: string
+          format: uri
+        imageUrl100:
+          type: string
+          format: uri
+        imageUrl200:
+          type: string
+          format: uri
+        imageUrl400:
+          type: string
+          format: uri
+
     StringBoolean:
       type: string
       enum: ["True", "False"]
@@ -583,6 +826,17 @@ components:
           examples: [Council not found]
 
   parameters:
+    CacheControl:
+      name: Cache-Control
+      in: header
+      description: >-
+        Send `no-cache` for query filters to take effect. Without it, the
+        response may come from a cache that ignores the query string. Other
+        values and `Pragma: no-cache` don't bypass the cache.
+      schema:
+        type: string
+        examples: [no-cache]
+
     MeritBadgeId:
       name: meritBadgeId
       in: path
@@ -614,6 +868,19 @@ components:
             errorCode: M400
             message: Bad Request
             errorDesc: uri parameter zipCode is not a valid zipCode
+    InvalidQuery:
+      description: >-
+        A query parameter has an invalid value, is repeated, or (on some
+        endpoints) is unknown. Parameter names and enum values are
+        case-sensitive.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            errorCode: M400
+            message: Bad Request
+            errorDesc: Invalid value 'bogus' for query parameter status. bogus is not a valid enum value
     NotFound:
       description: The resource was not found
       content:
