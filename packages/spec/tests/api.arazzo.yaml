@@ -151,3 +151,18 @@ workflows:
         operationId: $sourceDescriptions.api.listSwimmingClassifications
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: youth-leadership-positions
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listYouthLeadershipPositions
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: list-invalid-unit-type
+        operationId: $sourceDescriptions.api.listYouthLeadershipPositions
+        parameters:
+          - name: unitTypeId
+            in: query
+            value: 999999
+        successCriteria:
+          - condition: $statusCode == 400

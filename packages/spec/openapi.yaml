@@ -42,7 +42,7 @@ paths:
         Returns merit badges in one response, with no paging. Pass a badge's
         `id` to the requirements endpoint to get its requirements. Filters
         combine with AND. A filter value that matches nothing returns an empty
-        list. Unknown query parameters are ignored.
+        list.
       security: []
       parameters:
         - $ref: "#/components/parameters/CacheControl"
@@ -379,7 +379,6 @@ paths:
       description: >-
         Returns all countries as an array sorted by `short`, with no paging.
         With `id`, returns that one country as an object instead of an array.
-        Unknown query parameters are ignored.
       security: []
       parameters:
         - name: id
@@ -432,8 +431,7 @@ paths:
       description: >-
         Returns all US states, DC, territories, and military (APO) codes as an
         array sorted by `short`, with no paging. With `id`, returns that one
-        state as an object instead of an array. Unknown query parameters are
-        ignored.
+        state as an object instead of an array.
       security: []
       parameters:
         - name: id
@@ -551,6 +549,71 @@ paths:
                   short: Swimmer
                   effectiveDt: "2010-01-01"
                   expiryDt: null
+
+  /lookups/advancements/youthLeadershipPositions:
+    get:
+      tags: [Lookups]
+      operationId: listYouthLeadershipPositions
+      summary: List youth leadership positions
+      description: >-
+        Returns youth leadership positions as an array sorted by `id`, with no
+        paging. These are a subset of the positions list, sharing its `id`
+        values, but with native JSON types: numbers and booleans instead of
+        strings, and `null` where the positions list has an empty string.
+      security: []
+      parameters:
+        - name: unitTypeId
+          in: query
+          description: >-
+            Return only positions for this unit type, with each position's
+            `unitTypes` narrowed to that one entry. Must be an existing unit
+            type ID; one with no positions returns an empty list. Some
+            positions that list the unit type are still left out, so results
+            can differ from filtering the full list.
+          schema:
+            type: integer
+            minimum: 1
+            examples: [2]
+      responses:
+        "200":
+          description: Matching youth leadership positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/YouthLeadershipPosition"
+              example:
+                - id: 3
+                  name: Senior Patrol Leader
+                  minAge: null
+                  maxAge: null
+                  positionCode: null
+                  isUnitPosition: true
+                  isDistrictPosition: false
+                  isCouncilPosition: false
+                  isTerritoryPosition: false
+                  isNationalPosition: false
+                  akelaSkPositionCd: null
+                  akelaPositionId: 501
+                  isKey3: false
+                  unitTypes:
+                    - image: seniorpatrolleader200.png
+                      unitTypeId: 2
+        "400":
+          description: >-
+            `unitTypeId` is not an existing unit type ID (`C400`), or is
+            repeated (`M400`)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                errorCode: C400
+                message: Bad Request
+                errorDesc: >-
+                  Invalid request - "unitTypeId" must be valid in lookup
+                  "unittypes"
 
 components:
   schemas:
@@ -1249,6 +1312,75 @@ components:
           examples: ["2010-01-01"]
         expiryDt:
           type: "null"
+
+    YouthLeadershipPosition:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - minAge
+        - maxAge
+        - positionCode
+        - isUnitPosition
+        - isDistrictPosition
+        - isCouncilPosition
+        - isTerritoryPosition
+        - isNationalPosition
+        - akelaSkPositionCd
+        - akelaPositionId
+        - isKey3
+        - unitTypes
+      properties:
+        id:
+          type: integer
+          description: Same as the position's `id` in the positions list
+          examples: [3]
+        name:
+          type: string
+          examples: [Senior Patrol Leader]
+        minAge:
+          type: [integer, "null"]
+          description: Minimum age in years
+          examples: [14, null]
+        maxAge:
+          type: [integer, "null"]
+          description: Maximum age in years
+          examples: [18, null]
+        positionCode:
+          type: "null"
+        isUnitPosition:
+          type: boolean
+        isDistrictPosition:
+          type: boolean
+        isCouncilPosition:
+          type: boolean
+        isTerritoryPosition:
+          type: boolean
+        isNationalPosition:
+          type: boolean
+        akelaSkPositionCd:
+          type: "null"
+        akelaPositionId:
+          type: [integer, "null"]
+          examples: [501, null]
+        isKey3:
+          type: boolean
+        unitTypes:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [image, unitTypeId]
+            properties:
+              image:
+                type: [string, "null"]
+                description: Image file name
+                examples: [seniorpatrolleader200.png, null]
+              unitTypeId:
+                type: integer
+                examples: [2]
 
     StringBoolean:
       type: string
