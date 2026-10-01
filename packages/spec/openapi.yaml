@@ -656,6 +656,39 @@ paths:
                   effectiveDt: "2010-01-01"
                   expiryDt: null
 
+  /lookups/advancements/unitTypes:
+    get:
+      tags: [Lookups]
+      operationId: listUnitTypes
+      summary: List unit types
+      description: >-
+        Returns all unit types as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every unit type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitType"
+              example:
+                - id: "2"
+                  name: Scouts BSA Troop
+                  short: Troop
+                  minAge: "10"
+                  maxAge: "99"
+                  subUnitType: Patrol
+                  unitCode: S
+                - id: "8"
+                  name: Exploring STEM Lab
+                  short: Lab
+                  minAge: ""
+                  maxAge: "99"
+                  subUnitType: ""
+                  unitCode: ""
+
   /lookups/advancements/youthLeadershipPositions:
     get:
       tags: [Lookups]
@@ -672,10 +705,10 @@ paths:
           in: query
           description: >-
             Return only positions for this unit type, with each position's
-            `unitTypes` narrowed to that one entry. Must be an existing unit
-            type ID; one with no positions returns an empty list. Some
-            positions that list the unit type are still left out, so results
-            can differ from filtering the full list.
+            `unitTypes` narrowed to that one entry. Must be a unit type `id`
+            from the unit type list; one with no positions returns an empty
+            list. Some positions that list the unit type are still left out,
+            so results can differ from filtering the full list.
           schema:
             type: integer
             minimum: 1
@@ -1504,8 +1537,10 @@ components:
                 examples: [scoutmaster200.png, ""]
               unitTypeId:
                 type: string
-                pattern: "^([0-9]+)?$"
-                examples: ["2", ""]
+                anyOf:
+                  - $ref: "#/components/schemas/UnitTypeId"
+                  - type: string
+                    const: ""
 
     SwimmingClassification:
       type: object
@@ -1527,6 +1562,44 @@ components:
           examples: ["2010-01-01"]
         expiryDt:
           type: "null"
+
+    UnitType:
+      type: object
+      additionalProperties: false
+      required: [id, name, short, minAge, maxAge, subUnitType, unitCode]
+      properties:
+        id:
+          $ref: "#/components/schemas/UnitTypeId"
+        name:
+          type: string
+          examples: [Scouts BSA Troop]
+        short:
+          type: string
+          examples: [Troop]
+        minAge:
+          type: string
+          description: Minimum age in years, or an empty string if not set
+          pattern: "^([0-9]+)?$"
+          examples: ["10", ""]
+        maxAge:
+          type: string
+          description: Maximum age in years
+          pattern: "^[0-9]+$"
+          examples: ["99"]
+        subUnitType:
+          type: string
+          description: >-
+            Name of the unit's subdivision, or an empty string if it has none
+          examples: [Patrol, ""]
+        unitCode:
+          type: string
+          examples: [S, ""]
+
+    UnitTypeId:
+      type: string
+      description: An `id` from the unit type list
+      pattern: "^[0-9]+$"
+      examples: ["2"]
 
     YouthLeadershipPosition:
       type: object
@@ -1595,6 +1668,9 @@ components:
                 examples: [seniorpatrolleader200.png, null]
               unitTypeId:
                 type: integer
+                description: >-
+                  Unit type `id` from the unit type list, as a number instead
+                  of a string
                 examples: [2]
 
     StringBoolean:

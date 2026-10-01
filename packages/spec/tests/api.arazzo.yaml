@@ -173,6 +173,13 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
 
+  - workflowId: unit-types
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listUnitTypes
+        successCriteria:
+          - condition: $statusCode == 200
+
   - workflowId: youth-leadership-positions
     steps:
       - stepId: list
