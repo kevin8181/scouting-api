@@ -229,3 +229,10 @@ workflows:
         operationId: $sourceDescriptions.api.listPhoneCountryCodes
         successCriteria:
           - condition: $statusCode == 200
+
+  - workflowId: grades
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listGrades
+        successCriteria:
+          - condition: $statusCode == 200

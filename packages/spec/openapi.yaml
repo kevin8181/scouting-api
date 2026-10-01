@@ -908,6 +908,41 @@ paths:
                   short: "98 "
                   id: "854"
 
+  /lookups/person/grades:
+    get:
+      tags: [Lookups]
+      operationId: listGrades
+      summary: List school grades
+      description: >-
+        Returns all school grades as an array sorted by `id`. Sort by
+        `displayOrder` to get grade order, since Kindergarten has `id` 14.
+      security: []
+      responses:
+        "200":
+          description: An array of every school grade
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Grade"
+              example:
+                - id: 1
+                  gradeName: First Grade
+                  displayOrder: 2
+                - id: 12
+                  gradeName: Twelfth Grade
+                  displayOrder: 13
+                - id: 13
+                  gradeName: Graduated High School
+                  displayOrder: 14
+                - id: 14
+                  gradeName: Kindergarten / Grade Prior to the First Grade
+                  displayOrder: 1
+                - id: 15
+                  gradeName: Other
+                  displayOrder: 15
+
 components:
   schemas:
     MeritBadge:
@@ -1916,6 +1951,21 @@ components:
             Calling code, without a `+`. Not unique, can have extra leading
             zeros or a trailing space, and is `~~` for the Not Provided entry.
           examples: ["44", "001", "98 ", "~~"]
+
+    Grade:
+      type: object
+      additionalProperties: false
+      required: [id, gradeName, displayOrder]
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        gradeName:
+          type: string
+          examples: [First Grade]
+        displayOrder:
+          type: integer
+          examples: [2]
 
     StringBoolean:
       type: string
