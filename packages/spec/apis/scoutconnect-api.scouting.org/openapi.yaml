@@ -24,6 +24,8 @@ tags:
     description: Local councils
   - name: Locations
     description: Geographic lookups, such as ZIP code coordinates
+  - name: Organizations
+    description: Units, Exploring posts, and councils
 
 paths:
   /councils:
@@ -54,17 +56,102 @@ paths:
                 items:
                   $ref: "#/components/schemas/Council"
               example:
-                - address: 50 State House Sq Fl 5, Hartford, CONNECTICUT 06103
-                  councilNumber: "066"
+                - address: 6202 Bloomington Rd, Ft. Snelling, MINNESOTA 55111
+                  councilNumber: "250"
                   email: null
                   id: null
-                  name: Connecticut Rivers 066
-                  phone: 860-913-2700
+                  name: Northen Star 250
+                  phone: 612-261-2300
                   website: null
         "400":
           $ref: "#/components/responses/BadRequest"
           description: >-
             `zipCode` is missing, repeated, or isn't exactly 5 ASCII digits
+
+  /organizations/{organizationId}:
+    get:
+      tags: [Organizations]
+      operationId: getOrganization
+      summary: Get an organization
+      description: >-
+        Returns a unit, Exploring post, or council. The ID is matched
+        case-insensitively.
+      security: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization `id`
+          schema:
+            $ref: "#/components/schemas/OrganizationId"
+      responses:
+        "200":
+          description: The organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+              example:
+                address: 15915 Excelsior Blvd, Minnetonka, MN 55345
+                contactEmail: recruiting@troop346.org
+                contactName: Kelly Solko
+                contactPhone: (612) 269-3382
+                councilInfo:
+                  address: 6202 Bloomington Rd, Ft. Snelling, MN 55111
+                  councilNumber: "250"
+                  email: null
+                  id: 6ce6ab14-283b-4ef2-809a-0a1b5503aa5d
+                  name: Northern Star Council 250
+                  phone: (612) 261-2300
+                  website: null
+                description: >-
+                  We are committed to making Scouting Available to ALL
+                  families.  Families that need registration financial aid
+                  should apply at <a
+                  href="https://GOSCOUTING.ORG/FIN-AID">GOSCOUTING.ORG/FIN-AID</a>
+                  . Troop 3346 meets at All Saints Lutheran Church every Monday
+                  night.
+                gender: BOYS
+                hasManualRegistration: false
+                id: 2cb46226-b47b-4ef1-ab3e-51806fe91dfd
+                isComingSoon: false
+                isFundRaiser: true
+                lat: 44.903204
+                legacyUnitId: 278147
+                lng: -93.482351
+                meetingDay: Meets every Monday
+                meetingTime: 7:00 PM-8:30 PM
+                name: Troop 3346 All Saints Lutheran Church
+                number: "3346"
+                onlineRegistrationSupported: true
+                organizationDistrictName: M
+                organizationTerritoryName: Service Territory 04
+                organizationType: Units
+                program: SCOUTS_BSA
+                specialNeeds: TRADITIONAL PROGRAM
+                tinyUrl: null
+                triaVisitEncouraged: false
+                unitAgeYears: 56
+                unitFee: 120
+                unitSize: 33
+                unitTenureMonths: 682
+                website: https://www.troopwebhost.org/Troop346Minnetonka/
+                youthGrade: 5-12
+                youthJoiningFee: 210
+                zip: "55345"
+        "404":
+          description: >-
+            No organization has that ID, including any ID that isn't a UUID
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              example:
+                detail: "Unit not found for organizationGuid: 2cb46226-b47b-4ef1-ab3e-51806fe91dfe"
+                instance: /organizations/2cb46226-b47b-4ef1-ab3e-51806fe91dfe
+                status: 404
+                title: Not Found
+                correlationId: e62d7dc0-1275-4e5b-acc1-853fe8944ceb
 
   /zip-codes/{zipCode}/coordinates:
     get:
@@ -86,8 +173,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Coordinates"
               example:
-                latitude: 41.4849269
-                longitude: -73.2057595
+                latitude: 44.9188292
+                longitude: -93.4902391
         "400":
           $ref: "#/components/responses/BadRequest"
           description: The ZIP code isn't exactly 5 ASCII digits
@@ -123,11 +210,11 @@ components:
           description: >-
             Council office mailing address on one line, with the state name
             in capitals
-          examples: [50 State House Sq Fl 5, Hartford, CONNECTICUT 06103]
+          examples: ["6202 Bloomington Rd, Ft. Snelling, MINNESOTA 55111"]
         councilNumber:
           type: string
           description: Three digits, with leading zeros
-          examples: ["066"]
+          examples: ["250"]
         email:
           type: "null"
         id:
@@ -135,13 +222,13 @@ components:
         name:
           type: string
           description: Council name followed by its `councilNumber`
-          examples: [Connecticut Rivers 066]
+          examples: [Northen Star 250]
         phone:
           type: string
           description: >-
             Usually `NNN-NNN-NNNN`, sometimes with an extension such as
             ` ext. 100`, and not always a full US number
-          examples: [860-913-2700, 815-397-0210 ext. 100]
+          examples: [612-261-2300, 815-397-0210 ext. 100]
         website:
           type: "null"
 
@@ -154,10 +241,215 @@ components:
       properties:
         latitude:
           type: number
-          examples: [41.4849269]
+          examples: [44.9188292]
         longitude:
           type: number
-          examples: [-73.2057595]
+          examples: [-93.4902391]
+
+    Organization:
+      type: object
+      additionalProperties: false
+      description: >-
+        A unit, Exploring post, or council. Council records leave most
+        unit-specific fields `null`.
+      required:
+        - address
+        - contactEmail
+        - contactName
+        - contactPhone
+        - councilInfo
+        - description
+        - gender
+        - hasManualRegistration
+        - id
+        - isComingSoon
+        - isFundRaiser
+        - lat
+        - legacyUnitId
+        - lng
+        - meetingDay
+        - meetingTime
+        - name
+        - number
+        - onlineRegistrationSupported
+        - organizationDistrictName
+        - organizationTerritoryName
+        - organizationType
+        - program
+        - specialNeeds
+        - tinyUrl
+        - triaVisitEncouraged
+        - unitAgeYears
+        - unitFee
+        - unitSize
+        - unitTenureMonths
+        - website
+        - youthGrade
+        - youthJoiningFee
+        - zip
+      properties:
+        address:
+          type: [string, "null"]
+          description: >-
+            Meeting place on one line, sometimes starting with the place's
+            name
+          examples:
+            - Troop Meeting Location - Lake Oswego United Methodist Church 1855 South Shore Blvd, Lake Oswego, OR 97034
+        contactEmail:
+          type: [string, "null"]
+          examples: [recruiting@troop346.org]
+        contactName:
+          type: [string, "null"]
+          examples: [Kelly Solko]
+        contactPhone:
+          type: [string, "null"]
+          examples: ["(612) 269-3382"]
+        councilInfo:
+          $ref: "#/components/schemas/OrganizationCouncil"
+        description:
+          type: [string, "null"]
+          description: Free text that may contain HTML, such as links
+        gender:
+          type: string
+          description: Who the organization accepts. `NA` for councils and older-youth programs.
+          enum: [BOYS, GIRLS, FAMILY, NA]
+        hasManualRegistration:
+          type: boolean
+        id:
+          $ref: "#/components/schemas/OrganizationId"
+        isComingSoon:
+          type: boolean
+        isFundRaiser:
+          type: boolean
+        lat:
+          type: [number, "null"]
+          examples: [44.903204]
+        legacyUnitId:
+          type: [integer, "null"]
+          description: >-
+            The unit's ID in older Scouting America systems. `null` for
+            councils.
+          examples: [278147]
+        lng:
+          type: [number, "null"]
+          examples: [-93.482351]
+        meetingDay:
+          type: [string, "null"]
+          description: Free-text meeting schedule
+          examples:
+            [Meets every Monday, Meets on the 3rd Wednesday of the month]
+        meetingTime:
+          type: [string, "null"]
+          examples: [7:00 PM-8:30 PM]
+        name:
+          type: string
+          description: >-
+            For units, the unit type and `number` followed by the chartered
+            organization's name
+          examples:
+            - Troop 3346 All Saints Lutheran Church
+            - Northern Star Council 250
+        number:
+          type: string
+          description: >-
+            Unit number as four digits, or council number as three, with
+            leading zeros
+          pattern: "^[0-9]+$"
+          examples: ["3346", "250"]
+        onlineRegistrationSupported:
+          type: boolean
+        organizationDistrictName:
+          type: [string, "null"]
+          examples: [M]
+        organizationTerritoryName:
+          type: string
+          examples: [Service Territory 04]
+        organizationType:
+          type: [string, "null"]
+          enum: [Units, Post, Councils, null]
+        program:
+          type: string
+          description: The program a unit belongs to. `NA` for councils.
+          enum: [CUB_SCOUTS, SCOUTS_BSA, VENTURING, SEA_SCOUTS, EXPLORING, NA]
+        specialNeeds:
+          type: [string, "null"]
+          description: >-
+            Despite the name, a label for the unit's focus or type, such as
+            `TRADITIONAL PROGRAM`, `HIGH ADVENTURE`, or `POLICE OFFICER`
+          examples: [TRADITIONAL PROGRAM]
+        tinyUrl:
+          type: "null"
+        triaVisitEncouraged:
+          type: boolean
+        unitAgeYears:
+          type: [integer, "null"]
+          examples: [56]
+        unitFee:
+          type: [integer, "null"]
+          examples: [80]
+        unitSize:
+          type: [integer, "null"]
+          examples: [33]
+        unitTenureMonths:
+          type: [integer, "null"]
+          examples: [682]
+        website:
+          type: [string, "null"]
+          description: Not always a full URL
+          examples:
+            [https://www.troopwebhost.org/Troop346Minnetonka/, www.troop245.org]
+        youthGrade:
+          type: [string, "null"]
+          description: Grade range the unit serves
+          examples: [K-5, 5-12, 8-12]
+        youthJoiningFee:
+          type: [integer, "null"]
+          examples: [210]
+        zip:
+          type: string
+          description: A 5-digit ZIP code, or ZIP+4
+          pattern: "^[0-9]{5}(-[0-9]{4})?$"
+          examples: ["55345", 90057-2204]
+
+    OrganizationCouncil:
+      type: object
+      additionalProperties: false
+      description: The council an organization belongs to
+      required:
+        - address
+        - councilNumber
+        - email
+        - id
+        - name
+        - phone
+        - website
+      properties:
+        address:
+          type: string
+          examples: ["6202 Bloomington Rd, Ft. Snelling, MN 55111"]
+        councilNumber:
+          type: [string, "null"]
+          description: >-
+            Same as `councilNumber` from the council list. `null` on a
+            council's own record.
+          examples: ["250"]
+        email:
+          type: "null"
+        id:
+          $ref: "#/components/schemas/OrganizationId"
+        name:
+          type: string
+          examples: [Northern Star Council 250]
+        phone:
+          type: [string, "null"]
+          examples: ["(612) 261-2300"]
+        website:
+          type: "null"
+
+    OrganizationId:
+      type: string
+      description: An `id` from an organization
+      examples: [2cb46226-b47b-4ef1-ab3e-51806fe91dfd]
 
     Problem:
       type: object
@@ -193,7 +485,7 @@ components:
     ZipCode:
       type: string
       pattern: "^[0-9]{5}$"
-      examples: ["06488"]
+      examples: ["55345"]
 
   parameters:
     ZipCode:

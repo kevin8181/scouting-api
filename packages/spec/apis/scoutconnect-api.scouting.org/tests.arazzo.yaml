@@ -14,7 +14,7 @@ workflows:
         parameters:
           - name: zipCode
             in: query
-            value: "06488"
+            value: "55345"
         successCriteria:
           - condition: $statusCode == 200
       - stepId: list-invalid-zip-code
@@ -26,6 +26,25 @@ workflows:
         successCriteria:
           - condition: $statusCode == 400
 
+  - workflowId: organizations
+    steps:
+      - stepId: get
+        operationId: $sourceDescriptions.api.getOrganization
+        parameters:
+          - name: organizationId
+            in: path
+            value: 2cb46226-b47b-4ef1-ab3e-51806fe91dfd
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: get-not-found
+        operationId: $sourceDescriptions.api.getOrganization
+        parameters:
+          - name: organizationId
+            in: path
+            value: 2cb46226-b47b-4ef1-ab3e-51806fe91dfe
+        successCriteria:
+          - condition: $statusCode == 404
+
   - workflowId: zip-code-coordinates
     steps:
       - stepId: coordinates
@@ -33,7 +52,7 @@ workflows:
         parameters:
           - name: zipCode
             in: path
-            value: "06488"
+            value: "55345"
         successCriteria:
           - condition: $statusCode == 200
       - stepId: coordinates-invalid
