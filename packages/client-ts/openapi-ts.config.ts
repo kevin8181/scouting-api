@@ -4,9 +4,9 @@ import { defineConfig } from "@hey-api/openapi-ts";
 // written out in full so knip can see the dependency on the spec package.
 const specs = {
 	"api.scouting.org": import.meta
-		.resolve("@scouting-api/spec/apis/api.scouting.org/openapi.yaml"),
+		.resolve("@scouting-commons/scouting-api-spec/apis/api.scouting.org/openapi.yaml"),
 	"scoutconnect-api.scouting.org": import.meta
-		.resolve("@scouting-api/spec/apis/scoutconnect-api.scouting.org/openapi.yaml"),
+		.resolve("@scouting-commons/scouting-api-spec/apis/scoutconnect-api.scouting.org/openapi.yaml"),
 };
 
 export default defineConfig(

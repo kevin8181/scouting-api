@@ -1,5 +1,5 @@
 {
-	"name": "@scouting-api/client",
+	"name": "@scouting-commons/scouting-api",
 	"version": "0.1.0",
 	"type": "module",
 	"description": "TypeScript client for Scouting America APIs, generated from the specs.",
@@ -39,7 +39,7 @@
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.5",
 		"@hey-api/openapi-ts": "0.99.0",
-		"@scouting-api/spec": "workspace:*",
+		"@scouting-commons/scouting-api-spec": "workspace:*",
 		"publint": "^0.3.25",
 		"tsdown": "^0.23.0",
 		"typescript": "^6.0.3"

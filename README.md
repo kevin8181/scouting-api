@@ -39,14 +39,14 @@ Before you call an API, read the `info.description` at the top of its spec. It l
 
 ### Use the TypeScript client
 
-[`@scouting-api/client`](packages/client-ts/) is generated from the specs and already handles each API's quirks:
+[`@scouting-commons/scouting-api`](packages/client-ts/) is generated from the specs and already handles each API's quirks:
 
 ```sh
-npm install @scouting-api/client
+npm install @scouting-commons/scouting-api
 ```
 
 ```ts
-import { listMeritBadges } from "@scouting-api/client/api.scouting.org";
+import { listMeritBadges } from "@scouting-commons/scouting-api/api.scouting.org";
 
 const { data, error } = await listMeritBadges({ query: { id: "3" } });
 ```
@@ -131,7 +131,7 @@ packages/client-ts/
 Deliberate exceptions to Redocly's lint rules are listed in `.redocly.lint-ignore.yaml`. Regenerate it with:
 
 ```sh
-pnpm --filter @scouting-api/spec exec redocly lint --generate-ignore-file
+pnpm --filter @scouting-commons/scouting-api-spec exec redocly lint --generate-ignore-file
 ```
 
 ## License

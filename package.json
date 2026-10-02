@@ -22,7 +22,7 @@
 		"node": ">=24"
 	},
 	"scripts": {
-		"dev": "pnpm --filter @scouting-api/spec dev",
+		"dev": "pnpm --filter @scouting-commons/scouting-api-spec dev",
 		"lint": "pnpm -r lint",
 		"generate": "pnpm -r generate",
 		"build": "pnpm -r build",

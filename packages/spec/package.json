@@ -1,5 +1,5 @@
 {
-	"name": "@scouting-api/spec",
+	"name": "@scouting-commons/scouting-api-spec",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",

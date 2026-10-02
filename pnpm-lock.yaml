@@ -23,7 +23,7 @@ importers:
       '@hey-api/openapi-ts':
         specifier: 0.99.0
         version: 0.99.0(typescript@6.0.3)
-      '@scouting-api/spec':
+      '@scouting-commons/scouting-api-spec':
         specifier: workspace:*
         version: link:../spec
       publint:
