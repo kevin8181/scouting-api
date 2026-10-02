@@ -34,6 +34,10 @@ jobs:
 
       - run: pnpm build
 
+      # tsdown rewrites the client's package.json exports, so fail if the
+      # committed copy is out of date
+      - run: git diff --exit-code
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: packages/spec/dist/

@@ -37,6 +37,22 @@ curl -H 'Cache-Control: no-cache' 'https://api.scouting.org/advancements/meritBa
 
 Before you call an API, read the `info.description` at the top of its spec. It lists the API-wide quirks that change how you need to call it, such as the `Cache-Control` header above.
 
+### Use the TypeScript client
+
+[`@scouting-api/client`](packages/client-ts/) is generated from the specs and already handles each API's quirks:
+
+```sh
+npm install @scouting-api/client
+```
+
+```ts
+import { listMeritBadges } from "@scouting-api/client/api.scouting.org";
+
+const { data, error } = await listMeritBadges({ query: { id: "3" } });
+```
+
+See its [README](packages/client-ts/README.md) for more.
+
 ### Use a spec
 
 Point your tooling at a spec's raw URL:
@@ -76,7 +92,8 @@ pnpm dev      # serve the docs at http://localhost:8080
 | Command          | Description                                                                         |
 | ---------------- | ----------------------------------------------------------------------------------- |
 | `pnpm dev`       | Serve the docs at http://localhost:8080 and rebuild on change                       |
-| `pnpm build`     | Build every package (the docs go to `packages/spec/dist/`)                          |
+| `pnpm build`     | Build every package (the docs and the client each go to their package's `dist/`)    |
+| `pnpm generate`  | Regenerate the client from the specs, so your editor sees spec changes              |
 | `pnpm check`     | Run `format`, `lint`, `typecheck`, and `knip`. Run before committing                |
 | `pnpm lint`      | Lint the specs and tests with Redocly, and check every response has a contract test |
 | `pnpm format`    | Format all files with Prettier                                                      |
@@ -87,7 +104,7 @@ pnpm dev      # serve the docs at http://localhost:8080
 > [!WARNING]
 > `pnpm test` hits the production APIs. Keep the number of requests small.
 
-CI checks formatting, lints the specs, type-checks the scripts, runs Knip, and builds the docs on every push to `main` and on pull requests. Pushes to `main` deploy the docs to GitHub Pages.
+CI checks formatting, lints the specs, type-checks every package, runs Knip, and builds the docs and the client on every push to `main` and on pull requests. Pushes to `main` deploy the docs to GitHub Pages.
 
 ### Layout
 
@@ -102,6 +119,13 @@ packages/spec/
 ├── scripts/                    # docs build, dev server, coverage check
 ├── redocly.yaml                # lint rules and the list of APIs
 └── .redocly.lint-ignore.yaml   # deliberate lint exceptions
+
+packages/client-ts/
+├── src/
+│   ├── <host>.ts               # each API's entry point
+│   └── generated/              # generated from the specs (gitignored)
+├── openapi-ts.config.ts        # which specs to generate from
+└── tsdown.config.ts            # builds the npm package
 ```
 
 Deliberate exceptions to Redocly's lint rules are listed in `.redocly.lint-ignore.yaml`. Regenerate it with:

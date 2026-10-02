@@ -11,6 +11,29 @@
 npm install @scouting-api/client
 ```
 
+## Usage
+
+Each API has its own import path, named by its host. Every operation is a function that returns the parsed response as `data`, or the API's error response as `error`:
+
+```ts
+import { listMeritBadges } from "@scouting-api/client/api.scouting.org";
+
+const { data, error } = await listMeritBadges({ query: { id: "3" } });
+if (error) throw new Error(error.message);
+
+console.log(data.meritBadges[0]?.name);
+```
+
+Each import path also exports that API's `client`, for changing settings such as headers or the base URL:
+
+```ts
+import { client } from "@scouting-api/client/api.scouting.org";
+
+client.setConfig({ baseUrl: "https://example.com" });
+```
+
+The client already handles the API-wide quirks listed in each spec's `info.description`, so you don't need to.
+
 ## APIs
 
 | API                             | Docs                                                                            |

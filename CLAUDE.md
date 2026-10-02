@@ -4,9 +4,9 @@ This repo holds unofficial OpenAPI descriptions of APIs we don't control. The li
 
 Each API's `openapi.yaml` is the single source of truth for its details. Keep endpoint behavior, field meanings, and quirks there, and keep the README and this file about the repo.
 
-This is a pnpm workspace. The spec package is `packages/spec/`, and file paths below are relative to it. The TypeScript client is `packages/client-ts/`. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies.
+This is a pnpm workspace with two packages: the specs in `packages/spec/`, and the TypeScript client in `packages/client-ts/`. File paths below are relative to `packages/spec/` unless they start with `packages/`. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies.
 
-Each API lives in `apis/<host>/`, named by its full host (such as `apis/api.scouting.org/`), with its spec in `openapi.yaml` and its contract tests in `tests.arazzo.yaml`. Register both files as `apis` entries in `redocly.yaml`, or they won't be linted.
+Each API lives in `apis/<host>/`, named by its full host (such as `apis/api.scouting.org/`), with its spec in `openapi.yaml` and its contract tests in `tests.arazzo.yaml`.
 
 ## Adding or changing an endpoint
 
@@ -14,9 +14,16 @@ Each API lives in `apis/<host>/`, named by its full host (such as `apis/api.scou
 2. Call the live endpoint and save real responses, including every error case (bad input, unknown ID). Sample until each field's presence and type is settled: many records, and every variant a parameter can select, such as filters and old versions.
 3. Probe for undocumented query parameters. Try likely names, and read the error messages, which can name the valid parameters.
 4. Trace every foreign key: a field holding another record's ID, such as `actTypeId`. Find the endpoint that lists those records, in any spec here or by trying paths guessed from the field name, and confirm its IDs cover the values you sampled. Report any key you couldn't trace, and any new endpoint you found, to the user.
-5. Describe it in `openapi.yaml` following the spec rules below.
+5. Describe it in `openapi.yaml` following the spec rules below. A new API-wide quirk goes in `info.description`, and the client applies it too (see TypeScript client below).
 6. Add a contract test in the API's `tests.arazzo.yaml` for every status code you documented.
 7. Done when `pnpm check` and `pnpm test` both pass.
+
+## Adding an API
+
+1. Create `apis/<host>/openapi.yaml` and `apis/<host>/tests.arazzo.yaml`, and register both as `apis` entries in `redocly.yaml`, or they won't be linted.
+2. Add the API to the client: its spec path in `specs` in `packages/client-ts/openapi-ts.config.ts`, an entry file `packages/client-ts/src/<host>.ts`, and that file in `entry` in `packages/client-ts/tsdown.config.ts`.
+3. Add a row for it to the API tables in `README.md` and `packages/client-ts/README.md`.
+4. Done when `pnpm check` and `pnpm build` pass, and the `exports` that `pnpm build` writes into `packages/client-ts/package.json` are committed. CI fails when they're stale.
 
 ## Spec rules
 
@@ -38,3 +45,9 @@ Checks are meant to be strict. When one fails, fix the spec or tests to satisfy 
 `pnpm test` hits the production API. Keep each test to the fewest requests that cover its status codes: one request per documented response.
 
 When a test fails on an operation you didn't change, call that endpoint directly before touching anything, since the API itself may be failing. If it is, report it to the user and leave the test as is.
+
+## TypeScript client
+
+`@hey-api/openapi-ts` regenerates each API's client into `packages/client-ts/src/generated/<host>/` on every `build` and `typecheck`, so a spec change reaches the client with no client edits. The hand-written layer is one entry file per API, `packages/client-ts/src/<host>.ts`: it re-exports the generated code and `client`, and applies every API-wide quirk in that spec's `info.description`, so users of the package never need to know them.
+
+The client stays on TypeScript 6, because `@hey-api/openapi-ts` uses the compiler API that TypeScript 7 removed.
