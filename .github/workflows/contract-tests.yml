@@ -54,5 +54,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec redocly respect apis/${{ matrix.host }}/tests.arazzo.yaml
+      - run: pnpm exec node scripts/test.ts apis/${{ matrix.host }}/tests.arazzo.yaml
         working-directory: packages/spec
+        env:
+          SCOUTING_USERNAME: ${{ secrets.SCOUTING_USERNAME }}
+          SCOUTING_PASSWORD: ${{ secrets.SCOUTING_PASSWORD }}

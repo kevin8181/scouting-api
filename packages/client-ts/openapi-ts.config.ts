@@ -5,6 +5,8 @@ import { defineConfig } from "@hey-api/openapi-ts";
 const specs = {
 	"api.scouting.org": import.meta
 		.resolve("@scouting-commons/scouting-api-spec/apis/api.scouting.org/openapi.yaml"),
+	"auth.scouting.org": import.meta
+		.resolve("@scouting-commons/scouting-api-spec/apis/auth.scouting.org/openapi.yaml"),
 	"scoutconnect-api.scouting.org": import.meta
 		.resolve("@scouting-commons/scouting-api-spec/apis/scoutconnect-api.scouting.org/openapi.yaml"),
 };

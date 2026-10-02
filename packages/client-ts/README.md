@@ -43,6 +43,7 @@ The client already handles the API-wide quirks listed in each spec's `info.descr
 | API                             | Docs                                                                                   |
 | ------------------------------- | -------------------------------------------------------------------------------------- |
 | `api.scouting.org`              | [Docs](https://scouting-commons.github.io/scouting-api/api.scouting.org/)              |
+| `auth.scouting.org`             | [Docs](https://scouting-commons.github.io/scouting-api/auth.scouting.org/)             |
 | `scoutconnect-api.scouting.org` | [Docs](https://scouting-commons.github.io/scouting-api/scoutconnect-api.scouting.org/) |
 
 ## Contributing

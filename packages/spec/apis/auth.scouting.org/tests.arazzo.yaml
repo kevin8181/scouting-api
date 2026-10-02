@@ -1,0 +1,67 @@
+arazzo: 1.1.0
+info:
+  title: Scouting America Auth API contract tests
+  version: 0.1.0
+sourceDescriptions:
+  - name: api
+    type: openapi
+    url: ./openapi.yaml
+workflows:
+  - workflowId: authenticate
+    inputs:
+      type: object
+      additionalProperties: false
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    steps:
+      - stepId: sign-in
+        operationId: $sourceDescriptions.api.authenticate
+        parameters:
+          - name: Accept
+            in: header
+            value: application/json; version=2
+          - name: username
+            in: path
+            value: $inputs.username
+        requestBody:
+          contentType: application/json
+          payload:
+            password: $inputs.password
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: sign-in-short-password
+        operationId: $sourceDescriptions.api.authenticate
+        parameters:
+          - name: Accept
+            in: header
+            value: application/json; version=2
+          - name: username
+            in: path
+            value: $inputs.username
+        requestBody:
+          contentType: application/json
+          payload:
+            password: short
+        successCriteria:
+          - condition: $statusCode == 400
+      # An unknown username, so failed sign-ins never count against a real account
+      - stepId: sign-in-wrong-password
+        operationId: $sourceDescriptions.api.authenticate
+        parameters:
+          - name: Accept
+            in: header
+            value: application/json; version=2
+          - name: username
+            in: path
+            value: nosuchuser_zz9
+        requestBody:
+          contentType: application/json
+          payload:
+            password: wrongpassword
+        successCriteria:
+          - condition: $statusCode == 403

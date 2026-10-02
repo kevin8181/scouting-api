@@ -29,6 +29,7 @@ Scouting America's APIs have no public documentation. This repo fills the gap wi
 | API                             | Docs                                                                                   | Spec                                                                            |
 | ------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `api.scouting.org`              | [Docs](https://scouting-commons.github.io/scouting-api/api.scouting.org/)              | [`openapi.yaml`](packages/spec/apis/api.scouting.org/openapi.yaml)              |
+| `auth.scouting.org`             | [Docs](https://scouting-commons.github.io/scouting-api/auth.scouting.org/)             | [`openapi.yaml`](packages/spec/apis/auth.scouting.org/openapi.yaml)             |
 | `scoutconnect-api.scouting.org` | [Docs](https://scouting-commons.github.io/scouting-api/scoutconnect-api.scouting.org/) | [`openapi.yaml`](packages/spec/apis/scoutconnect-api.scouting.org/openapi.yaml) |
 
 ## Quick start

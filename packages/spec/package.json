@@ -13,7 +13,7 @@
 		"lint": "redocly lint && node scripts/check-coverage.ts",
 		"build": "node scripts/build.ts",
 		"typecheck": "tsc",
-		"test": "redocly respect apis/*/tests.arazzo.yaml"
+		"test": "node --env-file-if-exists=../../.env scripts/test.ts"
 	},
 	"devDependencies": {
 		"@redocly/cli": "^2.57.0",

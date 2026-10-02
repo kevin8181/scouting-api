@@ -1,0 +1,300 @@
+openapi: 3.1.0
+
+info:
+  title: Scouting America Auth API
+  version: 0.1.0
+  description: >-
+    Unofficial, community-maintained description of the Scouting America
+    sign-in API at auth.scouting.org. Not affiliated with or endorsed by
+    Scouting America. The MIT license applies to this description and
+    repository only, not to the API or its data.
+
+
+    Every request must send `Accept: application/json; version=2`. Without a
+    version, the API returns 400. `version=1` returns 410.
+  contact:
+    name: scouting-api on GitHub
+    url: https://github.com/scouting-commons/scouting-api/issues
+  license:
+    name: MIT
+    identifier: MIT
+
+servers:
+  - url: https://auth.scouting.org
+    description: Production
+
+tags:
+  - name: Authentication
+    description: Signing in with a my.scouting.org account
+
+paths:
+  /api/users/{username}/authenticate:
+    post:
+      tags: [Authentication]
+      operationId: authenticate
+      summary: Sign in
+      description: >-
+        Signs in with a my.scouting.org username and password. Send the
+        returned `token` as `Authorization: Bearer <token>` to call
+        api.scouting.org endpoints that need a signed-in user. The response
+        also sets it as the `token` cookie on `.scouting.org`, along with a
+        `SessionToken` cookie holding `sessionToken`.
+      security: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: >-
+            my.scouting.org username, matched case-insensitively. The response
+            echoes it as sent.
+          schema:
+            type: string
+            examples: [PatExample]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  minLength: 8
+                  format: password
+      responses:
+        "200":
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+              example:
+                sessionToken: 0F3A9C2E7B5D4418A6E1C3B2D9F07E5A4C8B1D2E3F4A5B6C7D8E9F0A1B2C3D4E
+                personGuid: 5B1E2C3D-4F5A-4B6C-8D7E-9F0A1B2C3D4E
+                userGuid: null
+                membership:
+                  memberId: 123456789
+                  email: pat@example.com
+                  isDelete: false
+                account:
+                  username: PatExample
+                  userId: 1234567
+                profile:
+                  firstName: Pat
+                  middleName: null
+                  lastName: Example
+                  gender: M
+                  prefix: null
+                  suffix: null
+                  dateOfBirth: "1990-01-01"
+                userProfile: null
+                token: eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiUGF0RXhhbXBsZSJ9.c2lnbmF0dXJl
+                hasMasqueradeRole: false
+                grantType: password-myst
+                isMfaSignedUp: false
+                mfaDeliveryMethods: []
+        "400":
+          description: >-
+            The body or the `Accept` header is invalid, such as a missing
+            `password`, one shorter than 8 characters, or an unknown field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+              example:
+                message: Invalid request
+                code: client_41
+                errors:
+                  - message: '"password" length must be at least 8 characters long'
+                    source: payload
+                    path: [password]
+        "403":
+          description: The username or password is wrong, including for an unknown username
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInError"
+              example:
+                message: Invalid username and/or password provided. Please try again later.
+                code: idp-106
+                errors: [SSOAuthentication]
+
+components:
+  schemas:
+    Session:
+      type: object
+      additionalProperties: false
+      required:
+        - sessionToken
+        - personGuid
+        - userGuid
+        - membership
+        - account
+        - profile
+        - userProfile
+        - token
+        - hasMasqueradeRole
+        - grantType
+        - isMfaSignedUp
+        - mfaDeliveryMethods
+      properties:
+        sessionToken:
+          type: string
+          description: 64 uppercase hex digits
+          pattern: "^[0-9A-F]{64}$"
+        personGuid:
+          type: string
+          description: >-
+            The signed-in person's ID in api.scouting.org person endpoints,
+            such as `/persons/v2/{personGuid}/personprofile`. An uppercase
+            UUID.
+          examples: [5B1E2C3D-4F5A-4B6C-8D7E-9F0A1B2C3D4E]
+        userGuid:
+          type: "null"
+        membership:
+          type: object
+          additionalProperties: false
+          required:
+            - memberId
+            - email
+            - isDelete
+          properties:
+            memberId:
+              type: integer
+              description: Scouting America member ID
+              examples: [123456789]
+            email:
+              type: string
+              examples: [pat@example.com]
+            isDelete:
+              type: boolean
+        account:
+          type: object
+          additionalProperties: false
+          required:
+            - username
+            - userId
+          properties:
+            username:
+              type: string
+              description: The `username` path parameter, as sent
+              examples: [PatExample]
+            userId:
+              type: integer
+              examples: [1234567]
+        profile:
+          type: object
+          additionalProperties: false
+          required:
+            - firstName
+            - middleName
+            - lastName
+            - gender
+            - prefix
+            - suffix
+            - dateOfBirth
+          properties:
+            firstName:
+              type: string
+              examples: [Pat]
+            middleName:
+              type: "null"
+            lastName:
+              type: string
+              examples: [Example]
+            gender:
+              type: string
+              examples: [M]
+            prefix:
+              type: "null"
+            suffix:
+              type: "null"
+            dateOfBirth:
+              type: string
+              format: date
+              examples: ["1990-01-01"]
+        userProfile:
+          type: "null"
+        token:
+          type: string
+          description: >-
+            A JWT for api.scouting.org, sent as `Authorization: Bearer
+            <token>`. Expires 8 hours after sign-in.
+        hasMasqueradeRole:
+          type: boolean
+        grantType:
+          type: string
+          examples: [password-myst]
+        isMfaSignedUp:
+          type: boolean
+        mfaDeliveryMethods:
+          type: array
+          maxItems: 0
+
+    SignInError:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - code
+        - errors
+      properties:
+        message:
+          type: string
+          examples:
+            [Invalid username and/or password provided. Please try again later.]
+        code:
+          type: string
+          examples: [idp-106]
+        errors:
+          type: array
+          items:
+            type: string
+          examples: [[SSOAuthentication]]
+
+    ValidationError:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - code
+        - errors
+      properties:
+        message:
+          type: string
+          examples: [Invalid request]
+        code:
+          type: string
+          examples: [client_41]
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - message
+              - source
+              - path
+            properties:
+              message:
+                type: string
+                description: >-
+                  What failed validation. Characters such as `/` in quoted
+                  header values are HTML-escaped.
+                examples:
+                  ['"password" length must be at least 8 characters long']
+              source:
+                type: string
+                description: Which part of the request failed
+                enum: [headers, payload]
+              path:
+                description: >-
+                  Where the invalid value is. A list of keys into the body
+                  for `payload`, or the lowercase header name for `headers`.
+                type: [array, string]
+                items:
+                  type: string
+                examples: [[password], accept]
