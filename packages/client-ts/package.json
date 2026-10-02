@@ -9,13 +9,13 @@
 		"api",
 		"openapi"
 	],
-	"homepage": "https://github.com/kevin8181/scouting-api/tree/main/packages/client-ts#readme",
+	"homepage": "https://github.com/scouting-commons/scouting-api/tree/main/packages/client-ts#readme",
 	"bugs": {
-		"url": "https://github.com/kevin8181/scouting-api/issues"
+		"url": "https://github.com/scouting-commons/scouting-api/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/kevin8181/scouting-api.git",
+		"url": "git+https://github.com/scouting-commons/scouting-api.git",
 		"directory": "packages/client-ts"
 	},
 	"license": "MIT",

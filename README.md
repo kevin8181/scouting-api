@@ -4,12 +4,12 @@
 
 **Unofficial OpenAPI descriptions of Scouting America APIs, checked against the live APIs every week.**
 
-[![CI](https://github.com/kevin8181/scouting-api/actions/workflows/ci.yml/badge.svg)](https://github.com/kevin8181/scouting-api/actions/workflows/ci.yml)
-[![Contract tests](https://github.com/kevin8181/scouting-api/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/kevin8181/scouting-api/actions/workflows/contract-tests.yml)
+[![CI](https://github.com/scouting-commons/scouting-api/actions/workflows/ci.yml/badge.svg)](https://github.com/scouting-commons/scouting-api/actions/workflows/ci.yml)
+[![Contract tests](https://github.com/scouting-commons/scouting-api/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/scouting-commons/scouting-api/actions/workflows/contract-tests.yml)
 [![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-6BA539?logo=openapiinitiative&logoColor=white)](https://spec.openapis.org/oas/v3.1.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[**📖 Browse the docs**](https://kevin8181.github.io/scouting-api/) · [Report an issue](https://github.com/kevin8181/scouting-api/issues)
+[**📖 Browse the docs**](https://scouting-commons.github.io/scouting-api/) · [Report an issue](https://github.com/scouting-commons/scouting-api/issues)
 
 </div>
 
@@ -22,10 +22,10 @@ Scouting America's APIs have no public documentation. This repo fills the gap wi
 
 ## APIs
 
-| API                             | Docs                                                                            | Spec                                                                            |
-| ------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `api.scouting.org`              | [Docs](https://kevin8181.github.io/scouting-api/api.scouting.org/)              | [`openapi.yaml`](packages/spec/apis/api.scouting.org/openapi.yaml)              |
-| `scoutconnect-api.scouting.org` | [Docs](https://kevin8181.github.io/scouting-api/scoutconnect-api.scouting.org/) | [`openapi.yaml`](packages/spec/apis/scoutconnect-api.scouting.org/openapi.yaml) |
+| API                             | Docs                                                                                   | Spec                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `api.scouting.org`              | [Docs](https://scouting-commons.github.io/scouting-api/api.scouting.org/)              | [`openapi.yaml`](packages/spec/apis/api.scouting.org/openapi.yaml)              |
+| `scoutconnect-api.scouting.org` | [Docs](https://scouting-commons.github.io/scouting-api/scoutconnect-api.scouting.org/) | [`openapi.yaml`](packages/spec/apis/scoutconnect-api.scouting.org/openapi.yaml) |
 
 ## Quick start
 
@@ -58,13 +58,13 @@ See its [README](packages/client-ts/README.md) for more.
 Point your tooling at a spec's raw URL:
 
 ```
-https://raw.githubusercontent.com/kevin8181/scouting-api/main/packages/spec/apis/<host>/openapi.yaml
+https://raw.githubusercontent.com/scouting-commons/scouting-api/main/packages/spec/apis/<host>/openapi.yaml
 ```
 
 For example, generate a TypeScript client with [`openapi-typescript`](https://openapi-ts.dev/):
 
 ```sh
-npx openapi-typescript https://raw.githubusercontent.com/kevin8181/scouting-api/main/packages/spec/apis/api.scouting.org/openapi.yaml -o scouting.d.ts
+npx openapi-typescript https://raw.githubusercontent.com/scouting-commons/scouting-api/main/packages/spec/apis/api.scouting.org/openapi.yaml -o scouting.d.ts
 ```
 
 The same URL works for importing into Postman, Insomnia, Bruno, or any OpenAPI code generator.
