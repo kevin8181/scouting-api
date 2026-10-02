@@ -19,4 +19,201 @@ servers:
   - url: https://scoutconnect-api.scouting.org
     description: Production
 
-paths: {}
+tags:
+  - name: Councils
+    description: Local councils
+  - name: Locations
+    description: Geographic lookups, such as ZIP code coordinates
+
+paths:
+  /councils:
+    get:
+      tags: [Councils]
+      operationId: listCouncils
+      summary: List councils serving a ZIP code
+      description: >-
+        Returns the council that serves a ZIP code, as a list of at most one.
+        A ZIP code no council serves returns an empty list. Some codes that
+        aren't US ZIP codes still return a council.
+      security: []
+      parameters:
+        - name: zipCode
+          in: query
+          required: true
+          description: A 5-digit ZIP code. Keep leading zeros.
+          schema:
+            $ref: "#/components/schemas/ZipCode"
+      responses:
+        "200":
+          description: The council serving the ZIP code, if any
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 1
+                items:
+                  $ref: "#/components/schemas/Council"
+              example:
+                - address: 50 State House Sq Fl 5, Hartford, CONNECTICUT 06103
+                  councilNumber: "066"
+                  email: null
+                  id: null
+                  name: Connecticut Rivers 066
+                  phone: 860-913-2700
+                  website: null
+        "400":
+          $ref: "#/components/responses/BadRequest"
+          description: >-
+            `zipCode` is missing, repeated, or isn't exactly 5 ASCII digits
+
+  /zip-codes/{zipCode}/coordinates:
+    get:
+      tags: [Locations]
+      operationId: getZipCodeCoordinates
+      summary: Get a ZIP code's coordinates
+      description: >-
+        Returns the latitude and longitude of a ZIP code. Lookups aren't
+        limited to US ZIP codes: a 5-digit code that isn't one may return the
+        location of a postal code in another country.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/ZipCode"
+      responses:
+        "200":
+          description: The ZIP code's coordinates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coordinates"
+              example:
+                latitude: 41.4849269
+                longitude: -73.2057595
+        "400":
+          $ref: "#/components/responses/BadRequest"
+          description: The ZIP code isn't exactly 5 ASCII digits
+        "404":
+          description: No coordinates were found for the ZIP code
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              example:
+                detail: No coordinates found for ZIP code 99999
+                instance: /zip-codes/99999/coordinates
+                status: 404
+                title: Not Found
+                correlationId: a3425ac2-8b5b-4568-baeb-04aee4288ca3
+
+components:
+  schemas:
+    Council:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - councilNumber
+        - email
+        - id
+        - name
+        - phone
+        - website
+      properties:
+        address:
+          type: string
+          description: >-
+            Council office mailing address on one line, with the state name
+            in capitals
+          examples: [50 State House Sq Fl 5, Hartford, CONNECTICUT 06103]
+        councilNumber:
+          type: string
+          description: Three digits, with leading zeros
+          examples: ["066"]
+        email:
+          type: "null"
+        id:
+          type: "null"
+        name:
+          type: string
+          description: Council name followed by its `councilNumber`
+          examples: [Connecticut Rivers 066]
+        phone:
+          type: string
+          description: >-
+            Usually `NNN-NNN-NNNN`, sometimes with an extension such as
+            ` ext. 100`, and not always a full US number
+          examples: [860-913-2700, 815-397-0210 ext. 100]
+        website:
+          type: "null"
+
+    Coordinates:
+      type: object
+      additionalProperties: false
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          examples: [41.4849269]
+        longitude:
+          type: number
+          examples: [-73.2057595]
+
+    Problem:
+      type: object
+      additionalProperties: false
+      description: An RFC 9457 problem details object
+      required:
+        - detail
+        - instance
+        - status
+        - title
+        - correlationId
+      properties:
+        detail:
+          type: string
+          examples: [No coordinates found for ZIP code 99999]
+        instance:
+          type: string
+          description: The request path
+          examples: [/zip-codes/99999/coordinates]
+        status:
+          type: integer
+          description: The HTTP status code
+          examples: [404]
+        title:
+          type: string
+          description: The HTTP status phrase
+          examples: [Not Found]
+        correlationId:
+          type: string
+          description: Matches the `X-Correlation-ID` response header
+          examples: [a3425ac2-8b5b-4568-baeb-04aee4288ca3]
+
+    ZipCode:
+      type: string
+      pattern: "^[0-9]{5}$"
+      examples: ["06488"]
+
+  parameters:
+    ZipCode:
+      name: zipCode
+      in: path
+      required: true
+      description: A 5-digit ZIP code. Keep leading zeros.
+      schema:
+        $ref: "#/components/schemas/ZipCode"
+
+  responses:
+    BadRequest:
+      description: A parameter is missing, repeated, or has an invalid value
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          example:
+            detail: "getCouncils.zipCode: must be a 5-digit ZIP code"
+            instance: /councils
+            status: 400
+            title: Bad Request
+            correlationId: e4c784d9-9055-471b-b48b-9d4fee438f3a

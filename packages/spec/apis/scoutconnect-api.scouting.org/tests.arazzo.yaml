@@ -6,4 +6,49 @@ sourceDescriptions:
   - name: api
     type: openapi
     url: ./openapi.yaml
-workflows: []
+workflows:
+  - workflowId: councils
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listCouncils
+        parameters:
+          - name: zipCode
+            in: query
+            value: "06488"
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: list-invalid-zip-code
+        operationId: $sourceDescriptions.api.listCouncils
+        parameters:
+          - name: zipCode
+            in: query
+            value: abcde
+        successCriteria:
+          - condition: $statusCode == 400
+
+  - workflowId: zip-code-coordinates
+    steps:
+      - stepId: coordinates
+        operationId: $sourceDescriptions.api.getZipCodeCoordinates
+        parameters:
+          - name: zipCode
+            in: path
+            value: "06488"
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: coordinates-invalid
+        operationId: $sourceDescriptions.api.getZipCodeCoordinates
+        parameters:
+          - name: zipCode
+            in: path
+            value: abcde
+        successCriteria:
+          - condition: $statusCode == 400
+      - stepId: coordinates-not-found
+        operationId: $sourceDescriptions.api.getZipCodeCoordinates
+        parameters:
+          - name: zipCode
+            in: path
+            value: "99999"
+        successCriteria:
+          - condition: $statusCode == 404
