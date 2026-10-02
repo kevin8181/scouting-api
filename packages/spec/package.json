@@ -5,6 +5,9 @@
 	"type": "module",
 	"description": "OpenAPI descriptions of Scouting America APIs, with docs and contract tests.",
 	"license": "MIT",
+	"exports": {
+		"./apis/*/openapi.yaml": "./apis/*/openapi.yaml"
+	},
 	"scripts": {
 		"dev": "node scripts/dev.ts",
 		"lint": "redocly lint && node scripts/check-coverage.ts",

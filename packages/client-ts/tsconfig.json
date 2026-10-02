@@ -12,5 +12,5 @@
 		// `undefined` to optional properties
 		"exactOptionalPropertyTypes": false
 	},
-	"include": ["src", "openapi-ts.config.ts"]
+	"include": ["src", "openapi-ts.config.ts", "tsdown.config.ts"]
 }

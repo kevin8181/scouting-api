@@ -6,14 +6,24 @@
 	"description": "TypeScript client for Scouting America APIs, generated from the specs.",
 	"license": "MIT",
 	"exports": {
-		".": "./src/index.ts"
+		"./api.scouting.org": "./dist/api.scouting.org.js",
+		"./scoutconnect-api.scouting.org": "./dist/scoutconnect-api.scouting.org.js",
+		"./package.json": "./package.json"
 	},
+	"files": [
+		"dist"
+	],
 	"scripts": {
-		"openapi-ts": "openapi-ts",
-		"typecheck": "tsc"
+		"generate": "openapi-ts",
+		"build": "openapi-ts && tsdown",
+		"typecheck": "openapi-ts && tsc"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/core": "^0.18.5",
 		"@hey-api/openapi-ts": "0.99.0",
+		"@scouting-api/spec": "workspace:*",
+		"publint": "^0.3.25",
+		"tsdown": "^0.23.0",
 		"typescript": "^6.0.3"
 	}
 }

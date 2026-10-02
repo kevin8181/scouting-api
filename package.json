@@ -24,6 +24,7 @@
 	"scripts": {
 		"dev": "pnpm --filter @scouting-api/spec dev",
 		"lint": "pnpm -r lint",
+		"generate": "pnpm -r generate",
 		"build": "pnpm -r build",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
