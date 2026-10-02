@@ -39,3 +39,7 @@ apis:
     root: apis/api.scouting.org/openapi.yaml
   api.scouting.org-tests:
     root: apis/api.scouting.org/tests.arazzo.yaml
+  scoutconnect-api.scouting.org:
+    root: apis/scoutconnect-api.scouting.org/openapi.yaml
+  scoutconnect-api.scouting.org-tests:
+    root: apis/scoutconnect-api.scouting.org/tests.arazzo.yaml

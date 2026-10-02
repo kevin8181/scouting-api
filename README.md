@@ -4,9 +4,10 @@ Unofficial OpenAPI descriptions of Scouting America APIs. This project is not af
 
 Each API has its own spec, in a folder under [`packages/spec/apis/`](packages/spec/apis) named by its host:
 
-| API                | Spec                                                                                                   |
-| ------------------ | ------------------------------------------------------------------------------------------------------ |
-| `api.scouting.org` | [`packages/spec/apis/api.scouting.org/openapi.yaml`](packages/spec/apis/api.scouting.org/openapi.yaml) |
+| API                             | Spec                                                                                                                             |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `api.scouting.org`              | [`packages/spec/apis/api.scouting.org/openapi.yaml`](packages/spec/apis/api.scouting.org/openapi.yaml)                           |
+| `scoutconnect-api.scouting.org` | [`packages/spec/apis/scoutconnect-api.scouting.org/openapi.yaml`](packages/spec/apis/scoutconnect-api.scouting.org/openapi.yaml) |
 
 Browse the docs at **https://kevin8181.github.io/scouting-api/**.
 
