@@ -273,6 +273,13 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
 
+  - workflowId: renewalOptoutReasons
+    steps:
+      - stepId: list
+        operationId: $sourceDescriptions.api.listRenewalOptoutReasons
+        successCriteria:
+          - condition: $statusCode == 200
+
   - workflowId: schools
     steps:
       - stepId: search

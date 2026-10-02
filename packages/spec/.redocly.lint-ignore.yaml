@@ -18,3 +18,4 @@ openapi.yaml:
     - '#/paths/~1lookups~1person~1nameSuffixes/get/responses'
     - '#/paths/~1lookups~1person~1positions/get/responses'
     - '#/paths/~1lookups~1person~1titlePrefixes/get/responses'
+    - '#/paths/~1lookups~1registrations~1renewalOptoutReasons/get/responses'

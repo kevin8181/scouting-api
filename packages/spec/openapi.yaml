@@ -1286,6 +1286,44 @@ paths:
                   name: Rev
                   short: REV
 
+  /lookups/registrations/renewalOptoutReasons:
+    get:
+      tags: [Lookups]
+      operationId: listRenewalOptoutReasons
+      summary: List renewal opt-out reasons
+      description: >-
+        Returns all reasons a member can give for not renewing their
+        registration, as an array sorted by `id`.
+      security: []
+      responses:
+        "200":
+          description: An array of every renewal opt-out reason
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RenewalOptoutReason"
+              example:
+                - id: 1
+                  name: Moved
+                  description: Moved
+                  effectiveDt: "2023-08-01"
+                  expiryDt: null
+                  createdBy: NETBSA\bsayapan
+                  createdDt: "2023-05-16T18:34:12"
+                  lastModifiedBy: null
+                  lastModifiedDt: null
+                - id: 6
+                  name: Not participating after registration expires
+                  description: Not participating after registration expires
+                  effectiveDt: "2025-05-29"
+                  expiryDt: null
+                  createdBy: NETBSA\bsasql2
+                  createdDt: "2025-05-29T08:42:08"
+                  lastModifiedBy: null
+                  lastModifiedDt: null
+
 components:
   schemas:
     MeritBadge:
@@ -2599,6 +2637,52 @@ components:
           type: string
           description: Uppercase form of `name`
           examples: [DR, MRS]
+
+    RenewalOptoutReason:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - description
+        - effectiveDt
+        - expiryDt
+        - createdBy
+        - createdDt
+        - lastModifiedBy
+        - lastModifiedDt
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        name:
+          type: string
+          examples: [Moved]
+        description:
+          type: string
+          examples: [Moved]
+        effectiveDt:
+          type: string
+          format: date
+          examples: ["2023-08-01"]
+        expiryDt:
+          type: [string, "null"]
+          format: date
+          description: Date the reason expired, or `null` if it is current
+          examples: [null]
+        createdBy:
+          type: string
+          description: Username of the account that created the record
+          examples: [NETBSA\bsayapan]
+        createdDt:
+          type: string
+          description: Creation time as `YYYY-MM-DDThh:mm:ss`, with no time zone
+          pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          examples: ["2023-05-16T18:34:12"]
+        lastModifiedBy:
+          type: "null"
+        lastModifiedDt:
+          type: "null"
 
     StringBoolean:
       type: string
