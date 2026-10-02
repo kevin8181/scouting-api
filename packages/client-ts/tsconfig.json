@@ -1,8 +1,16 @@
 {
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		// The client runs outside Node too, so don't allow Node globals
-		"types": []
+		// Runs in browsers as well as Node, so use web APIs and no Node globals
+		"lib": ["esnext", "dom", "dom.iterable"],
+		"types": [],
+		"noEmit": true,
+		// @hey-api/openapi-ts ships declaration files that don't type-check
+		// on their own (missing @types/semver, DOM globals, a broken `log` type)
+		"skipLibCheck": true,
+		// The client runtime that @hey-api/openapi-ts generates passes
+		// `undefined` to optional properties
+		"exactOptionalPropertyTypes": false
 	},
-	"include": ["src"]
+	"include": ["src", "openapi-ts.config.ts"]
 }

@@ -1,4 +1,11 @@
 {
 	"extends": "../../tsconfig.base.json",
+	// Type-check only: Node runs the scripts directly by stripping types
+	"compilerOptions": {
+		"lib": ["esnext"],
+		"types": ["node"],
+		"noEmit": true,
+		"allowImportingTsExtensions": true
+	},
 	"include": ["scripts"]
 }

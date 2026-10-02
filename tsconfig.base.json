@@ -1,14 +1,10 @@
 {
-	// Shared settings for every package. Type-check only: Node runs the .ts
-	// files directly by stripping types.
+	// Strictness and module settings shared by every package. Each package
+	// sets its own environment: lib, types, and whether it emits.
 	"compilerOptions": {
 		"module": "nodenext",
-		"lib": ["esnext"],
-		"types": ["node"],
-		"noEmit": true,
 		"verbatimModuleSyntax": true,
 		"erasableSyntaxOnly": true,
-		"allowImportingTsExtensions": true,
 
 		"strict": true,
 		"exactOptionalPropertyTypes": true,

@@ -9,9 +9,11 @@
 		".": "./src/index.ts"
 	},
 	"scripts": {
+		"openapi-ts": "openapi-ts",
 		"typecheck": "tsc"
 	},
 	"devDependencies": {
-		"typescript": "^7.0.2"
+		"@hey-api/openapi-ts": "0.99.0",
+		"typescript": "^6.0.3"
 	}
 }
