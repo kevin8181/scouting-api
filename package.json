@@ -17,7 +17,7 @@
 		"type": "git",
 		"url": "git+https://github.com/kevin8181/scouting-api.git"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"engines": {
 		"node": ">=24"
 	},

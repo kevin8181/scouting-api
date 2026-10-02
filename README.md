@@ -7,7 +7,7 @@
 [![CI](https://github.com/kevin8181/scouting-api/actions/workflows/ci.yml/badge.svg)](https://github.com/kevin8181/scouting-api/actions/workflows/ci.yml)
 [![Contract tests](https://github.com/kevin8181/scouting-api/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/kevin8181/scouting-api/actions/workflows/contract-tests.yml)
 [![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-6BA539?logo=openapiinitiative&logoColor=white)](https://spec.openapis.org/oas/v3.1.0)
-[![License: CC0-1.0](https://img.shields.io/badge/license-CC0--1.0-lightgrey)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 [**📖 Browse the docs**](https://kevin8181.github.io/scouting-api/) · [Report an issue](https://github.com/kevin8181/scouting-api/issues)
 
@@ -112,4 +112,4 @@ pnpm --filter @scouting-api/spec exec redocly lint --generate-ignore-file
 
 ## License
 
-[CC0 1.0 Universal](LICENSE). This covers the contents of this repository only, not the APIs or their data.
+[MIT](LICENSE). This covers the contents of this repository only, not the APIs or their data.
