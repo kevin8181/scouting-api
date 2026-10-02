@@ -1,6 +1,6 @@
 {
 	"name": "@scouting-commons/scouting-api",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"type": "module",
 	"description": "TypeScript client for Scouting America APIs, generated from the specs.",
 	"keywords": [
@@ -19,6 +19,7 @@
 		"directory": "packages/client-ts"
 	},
 	"license": "MIT",
+	"types": "./dist/api.scouting.org.d.ts",
 	"exports": {
 		"./api.scouting.org": "./dist/api.scouting.org.js",
 		"./scoutconnect-api.scouting.org": "./dist/scoutconnect-api.scouting.org.js",
