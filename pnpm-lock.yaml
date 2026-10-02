@@ -15,6 +15,12 @@ importers:
         specifier: ^3.9.9
         version: 3.9.9
 
+  packages/client-ts:
+    devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/spec:
     devDependencies:
       '@redocly/cli':

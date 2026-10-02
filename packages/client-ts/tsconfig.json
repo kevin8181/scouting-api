@@ -1,0 +1,8 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		// The client runs outside Node too, so don't allow Node globals
+		"types": []
+	},
+	"include": ["src"]
+}

@@ -4,7 +4,7 @@ This repo holds unofficial OpenAPI descriptions of APIs we don't control. The li
 
 Each API's `openapi.yaml` is the single source of truth for its details. Keep endpoint behavior, field meanings, and quirks there, and keep the README and this file about the repo.
 
-This is a pnpm workspace. The spec package is `packages/spec/`, and file paths below are relative to it. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies.
+This is a pnpm workspace. The spec package is `packages/spec/`, and file paths below are relative to it. The TypeScript client is `packages/client-ts/`. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies.
 
 Each API lives in `apis/<host>/`, named by its full host (such as `apis/api.scouting.org/`), with its spec in `openapi.yaml` and its contract tests in `tests.arazzo.yaml`. Register both files as `apis` entries in `redocly.yaml`, or they won't be linted.
 

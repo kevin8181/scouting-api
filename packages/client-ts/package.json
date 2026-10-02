@@ -1,0 +1,17 @@
+{
+	"name": "@scouting-api/client",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "TypeScript client for Scouting America APIs, generated from the specs.",
+	"license": "MIT",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc"
+	},
+	"devDependencies": {
+		"typescript": "^7.0.2"
+	}
+}
