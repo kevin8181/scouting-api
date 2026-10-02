@@ -7,7 +7,7 @@
 >
 > Calling these APIs is subject to Scouting America's terms of service, whether you call them through this client or any other way.
 >
-> The client and specs grant no access beyond what Scouting America already gives you. Every endpoint is either fully public or returns only what a logged-in user can already see in Scouting America's web apps. Nothing here reveals personal information you can't already see, or lets you change anything your account can't already change.
+> The client and specs grant no access beyond what Scouting America already gives you. Every endpoint is either fully public or returns only what a logged-in user can already see in Scouting America's web apps. Nothing here reveals personal information you can't already see, or lets you change anything your account can't already change. For any logged-in operations, you must supply your own credentials.
 
 ## Install
 
