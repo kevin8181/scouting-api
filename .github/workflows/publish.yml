@@ -1,0 +1,45 @@
+name: Publish
+
+# Stages the client on npm when a GitHub release is published. It goes live
+# once a maintainer approves it with 2FA, on npmjs.com or with
+# `npm stage approve`. Trusted publishing (OIDC) authenticates the upload, so
+# there's no npm token.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Uses the pnpm version from packageManager in package.json
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      # `npm stage publish` needs npm 11.15 or later, and npm 12 needs a newer
+      # Node than .nvmrc
+      - run: npm install -g npm@^11.15.0
+
+      - run: pnpm install --frozen-lockfile
+
+      # Release tags are v<version>, matching the client's package.json
+      - name: Check the tag matches the version
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: test "$TAG" = "v$(jq -r .version packages/client-ts/package.json)"
+
+      # Packing builds the client and replaces its workspace:* versions
+      - run: pnpm --filter @scouting-commons/scouting-api pack --pack-destination "$RUNNER_TEMP"
+
+      - run: npm stage publish "$RUNNER_TEMP"/*.tgz --access public
