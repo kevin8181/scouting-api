@@ -15,6 +15,10 @@
 
 > [!NOTE]
 > This project is not affiliated with or endorsed by Scouting America. The specs describe what the APIs actually do, observed by calling them, and may lag behind changes to the APIs.
+>
+> Calling these APIs is subject to Scouting America's terms of service, whether you call them through these specs or any other way.
+>
+> The specs grant no access beyond what Scouting America already gives you. Every endpoint is either fully public or returns only what a logged-in user can already see in Scouting America's web apps. Nothing here reveals personal information you can't already see, or lets you change anything your account can't already change.
 
 ## Why
 
