@@ -2,7 +2,7 @@
 	"name": "scouting-api-workspace",
 	"version": "0.1.0",
 	"private": true,
-	"description": "Unofficial, community-maintained description of the public Scouting America API at api.scouting.org.",
+	"description": "Unofficial, community-maintained descriptions of Scouting America APIs, starting with api.scouting.org.",
 	"keywords": [
 		"scouting",
 		"api",

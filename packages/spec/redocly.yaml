@@ -30,3 +30,12 @@ rules:
       defined: true
       const: false
     message: "Object schemas must set `additionalProperties: false`."
+
+# Two entries per API, named by its host: the spec, and its contract tests.
+# The tests get their own entry so they lint under the API config too.
+# Otherwise Redocly reports the OpenAPI rules above as unused.
+apis:
+  api.scouting.org:
+    root: apis/api.scouting.org/openapi.yaml
+  api.scouting.org-tests:
+    root: apis/api.scouting.org/tests.arazzo.yaml

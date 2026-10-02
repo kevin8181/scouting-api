@@ -1,19 +1,21 @@
 # CLAUDE.md
 
-This repo is an unofficial OpenAPI description of an API we don't control. The live API is the source of truth: the spec records what the API actually does, observed by calling it.
+This repo holds unofficial OpenAPI descriptions of APIs we don't control. The live APIs are the source of truth: each spec records what its API actually does, observed by calling it.
 
-`openapi.yaml` is the single source of truth for API details. Keep endpoint behavior, field meanings, and quirks there, and keep the README and this file about the repo.
+Each API's `openapi.yaml` is the single source of truth for its details. Keep endpoint behavior, field meanings, and quirks there, and keep the README and this file about the repo.
 
 This is a pnpm workspace. The spec package is `packages/spec/`, and file paths below are relative to it. Run commands from the repo root. Each package declares the tools it uses as its own dev dependencies.
 
+Each API lives in `apis/<host>/`, named by its full host (such as `apis/api.scouting.org/`), with its spec in `openapi.yaml` and its contract tests in `tests.arazzo.yaml`. Register both files as `apis` entries in `redocly.yaml`, or they won't be linted.
+
 ## Adding or changing an endpoint
 
-1. Read `info.description` in `openapi.yaml`. It lists API-wide quirks that change how you must call the API, both when sampling and in contract tests.
+1. Read `info.description` in the API's `openapi.yaml`. It lists API-wide quirks that change how you must call the API, both when sampling and in contract tests.
 2. Call the live endpoint and save real responses, including every error case (bad input, unknown ID). Sample until each field's presence and type is settled: many records, and every variant a parameter can select, such as filters and old versions.
 3. Probe for undocumented query parameters. Try likely names, and read the error messages, which can name the valid parameters.
-4. Trace every foreign key: a field holding another record's ID, such as `actTypeId`. Find the endpoint that lists those records, in the spec or by trying paths guessed from the field name, and confirm its IDs cover the values you sampled. Report any key you couldn't trace, and any new endpoint you found, to the user.
+4. Trace every foreign key: a field holding another record's ID, such as `actTypeId`. Find the endpoint that lists those records, in any spec here or by trying paths guessed from the field name, and confirm its IDs cover the values you sampled. Report any key you couldn't trace, and any new endpoint you found, to the user.
 5. Describe it in `openapi.yaml` following the spec rules below.
-6. Add a contract test in `tests/api.arazzo.yaml` for every status code you documented.
+6. Add a contract test in the API's `tests.arazzo.yaml` for every status code you documented.
 7. Done when `pnpm check` and `pnpm test` both pass.
 
 ## Spec rules
@@ -29,7 +31,7 @@ This is a pnpm workspace. The spec package is `packages/spec/`, and file paths b
 
 ## Strictness
 
-Checks are meant to be strict. When one fails, fix the spec or tests to satisfy it. Loosen a rule in `redocly.yaml` only when it conflicts with real API behavior, and add a comment saying why. One-off exceptions go in `.redocly.lint-ignore.yaml`; regenerate it with `--generate-ignore-file` whenever an exception is added or resolved.
+Checks are meant to be strict. When one fails, fix the spec or tests to satisfy it. Loosen a rule in `redocly.yaml` only when it conflicts with real API behavior, and add a comment saying why. Loosen it under that API's entry in `apis`, not for every API. One-off exceptions go in `.redocly.lint-ignore.yaml`; regenerate it with `--generate-ignore-file` whenever an exception is added or resolved.
 
 ## Contract tests
 

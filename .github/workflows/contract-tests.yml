@@ -22,8 +22,25 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  # One test job per API, so a failure points at the API that changed.
+  apis:
     runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.list.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: list
+        run: echo "hosts=$(ls packages/spec/apis | jq -Rnc '[inputs]')" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: apis
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(needs.apis.outputs.hosts) }}
+    name: test (${{ matrix.host }})
     steps:
       - uses: actions/checkout@v7
 
@@ -37,4 +54,5 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm test
+      - run: pnpm exec redocly respect apis/${{ matrix.host }}/tests.arazzo.yaml
+        working-directory: packages/spec

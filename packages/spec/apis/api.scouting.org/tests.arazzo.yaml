@@ -5,7 +5,7 @@ info:
 sourceDescriptions:
   - name: api
     type: openapi
-    url: ../openapi.yaml
+    url: ./openapi.yaml
 workflows:
   # Steps on cached list endpoints send no-cache. See the CacheControl parameter.
   - workflowId: merit-badges
