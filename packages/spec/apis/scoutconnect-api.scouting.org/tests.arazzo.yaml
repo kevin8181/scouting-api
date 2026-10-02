@@ -45,6 +45,26 @@ workflows:
         successCriteria:
           - condition: $statusCode == 404
 
+  - workflowId: organization-search
+    steps:
+      - stepId: search
+        operationId: $sourceDescriptions.api.searchOrganizations
+        requestBody:
+          contentType: application/json
+          payload:
+            zip: "55345"
+            radius: 2
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: search-invalid-zip
+        operationId: $sourceDescriptions.api.searchOrganizations
+        requestBody:
+          contentType: application/json
+          payload:
+            zip: abcde
+        successCriteria:
+          - condition: $statusCode == 400
+
   - workflowId: zip-code-coordinates
     steps:
       - stepId: coordinates

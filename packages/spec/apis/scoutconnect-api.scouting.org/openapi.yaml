@@ -153,6 +153,82 @@ paths:
                 title: Not Found
                 correlationId: e62d7dc0-1275-4e5b-acc1-853fe8944ceb
 
+  /organizations/search:
+    post:
+      tags: [Organizations]
+      operationId: searchOrganizations
+      summary: Search organizations near a ZIP code
+      description: >-
+        Returns every organization in the ZIP code, whatever its distance,
+        followed by organizations from other ZIP codes within `radius`. Each
+        part is ordered by `mileage`. A ZIP code with no organizations
+        returns an empty list. Results are summaries, and their values can
+        disagree with the organization's full record.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationSearch"
+            example:
+              zip: "55345"
+              radius: 10
+              programAcceptGender:
+                SCOUTS_BSA: ALL
+                CUB_SCOUTS: ALL
+      responses:
+        "200":
+          description: Matching organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrganizationSearchResult"
+              example:
+                - address: 4420 County Road 101 Ridgewood Church, Minnetonka, MN 55345
+                  contactName: Donald Miller
+                  contactPhone: null
+                  councilNumber: null
+                  gender: FAMILY
+                  hasManualRegistration: false
+                  id: cea157e8-f780-4808-bc39-7e6e45fa4287
+                  isComingSoon: false
+                  lat: 44.9231353
+                  lng: -93.5046821
+                  meetingDays: [TUE]
+                  mileage: 0.766929
+                  name: Troop 3430 Ridgewood Church
+                  number: "3430"
+                  onlineRegistrationSupported: true
+                  program: SCOUTS_BSA
+                  zip: "55345"
+                - address: 15915 Excelsior Blvd, Minnetonka, MN 55345
+                  contactName: Kelly Solko
+                  contactPhone: (612) 269-3382
+                  councilNumber: null
+                  gender: BOYS
+                  hasManualRegistration: false
+                  id: 2cb46226-b47b-4ef1-ab3e-51806fe91dfd
+                  isComingSoon: false
+                  lat: 44.903204
+                  lng: -93.482351
+                  meetingDays: [MON]
+                  mileage: 1.146882
+                  name: Troop 3346 All Saints Lutheran Church
+                  number: "3346"
+                  onlineRegistrationSupported: true
+                  program: SCOUTS_BSA
+                  zip: "55345"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+          description: >-
+            The body isn't a JSON object, `zip` is missing or isn't exactly 5
+            ASCII digits, `radius` isn't greater than 0, or
+            `programAcceptGender` has an unknown key or value. Field errors
+            list each problem in `violations`.
+
   /zip-codes/{zipCode}/coordinates:
     get:
       tags: [Locations]
@@ -250,8 +326,8 @@ components:
       type: object
       additionalProperties: false
       description: >-
-        A unit, Exploring post, or council. Council records leave most
-        unit-specific fields `null`.
+        A unit, Exploring post, Learning for Life group, or council. Council
+        records leave most unit-specific fields `null`.
       required:
         - address
         - contactEmail
@@ -310,9 +386,7 @@ components:
           type: [string, "null"]
           description: Free text that may contain HTML, such as links
         gender:
-          type: string
-          description: Who the organization accepts. `NA` for councils and older-youth programs.
-          enum: [BOYS, GIRLS, FAMILY, NA]
+          $ref: "#/components/schemas/OrganizationGender"
         hasManualRegistration:
           type: boolean
         id:
@@ -368,9 +442,7 @@ components:
           type: [string, "null"]
           enum: [Units, Post, Councils, null]
         program:
-          type: string
-          description: The program a unit belongs to. `NA` for councils.
-          enum: [CUB_SCOUTS, SCOUTS_BSA, VENTURING, SEA_SCOUTS, EXPLORING, NA]
+          $ref: "#/components/schemas/OrganizationProgram"
         specialNeeds:
           type: [string, "null"]
           description: >-
@@ -400,7 +472,7 @@ components:
             [https://www.troopwebhost.org/Troop346Minnetonka/, www.troop245.org]
         youthGrade:
           type: [string, "null"]
-          description: Grade range the unit serves
+          description: Grade range the unit serves. Empty for groups.
           examples: [K-5, 5-12, 8-12]
         youthJoiningFee:
           type: [integer, "null"]
@@ -446,10 +518,144 @@ components:
         website:
           type: "null"
 
+    OrganizationGender:
+      type: string
+      description: >-
+        Who the organization accepts. `NA` for councils, groups, and
+        programs that don't set one, such as Venturing.
+      enum: [BOYS, GIRLS, FAMILY, NA]
+
     OrganizationId:
       type: string
       description: An `id` from an organization
       examples: [2cb46226-b47b-4ef1-ab3e-51806fe91dfd]
+
+    OrganizationProgram:
+      type: string
+      description: The program a unit belongs to. `NA` for councils and groups.
+      enum: [CUB_SCOUTS, SCOUTS_BSA, VENTURING, SEA_SCOUTS, EXPLORING, NA]
+
+    OrganizationSearch:
+      type: object
+      additionalProperties: false
+      required: [zip]
+      properties:
+        zip:
+          $ref: "#/components/schemas/ZipCode"
+        radius:
+          type: number
+          description: Search radius in miles. Fractions are allowed.
+          exclusiveMinimum: 0
+          default: 20
+          examples: [10]
+        programAcceptGender:
+          type: object
+          additionalProperties: false
+          description: >-
+            Return only the programs listed, each filtered by `gender`. Omit
+            it, or send an empty object, for every program.
+          properties:
+            CUB_SCOUTS:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+            SCOUTS_BSA:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+            VENTURING:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+            SEA_SCOUTS:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+            EXPLORING:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+            NA:
+              $ref: "#/components/schemas/OrganizationGenderFilter"
+
+    OrganizationGenderFilter:
+      type: string
+      description: >-
+        `ALL` matches every `gender`. Other values match that `gender`
+        exactly, except `NA`, which matches nothing. Use `ALL` for programs
+        whose units are all `NA`, such as Venturing.
+      enum: [ALL, BOYS, GIRLS, FAMILY, NA]
+
+    OrganizationSearchResult:
+      type: object
+      additionalProperties: false
+      description: A summary of an organization
+      required:
+        - address
+        - contactName
+        - contactPhone
+        - councilNumber
+        - gender
+        - hasManualRegistration
+        - id
+        - isComingSoon
+        - lat
+        - lng
+        - meetingDays
+        - mileage
+        - name
+        - number
+        - onlineRegistrationSupported
+        - program
+        - zip
+      properties:
+        address:
+          type: [string, "null"]
+          description: >-
+            Meeting place on one line. A ZIP+4 is cut to 5 digits, and a
+            leading zero may be missing.
+          examples: ["15915 Excelsior Blvd, Minnetonka, MN 55345"]
+        contactName:
+          type: [string, "null"]
+          examples: [Kelly Solko]
+        contactPhone:
+          type: [string, "null"]
+          examples: ["(612) 269-3382"]
+        councilNumber:
+          type: "null"
+        gender:
+          $ref: "#/components/schemas/OrganizationGender"
+        hasManualRegistration:
+          type: boolean
+          description: Always the opposite of `onlineRegistrationSupported`
+        id:
+          $ref: "#/components/schemas/OrganizationId"
+        isComingSoon:
+          type: boolean
+        lat:
+          type: number
+          examples: [44.903204]
+        lng:
+          type: number
+          examples: [-93.482351]
+        meetingDays:
+          type: array
+          description: Usually empty or one day
+          items:
+            type: string
+            enum: [SUN, MON, TUE, WED, THU, FRI, SAT]
+        mileage:
+          type: number
+          description: Distance in miles from the searched ZIP code
+          examples: [1.146882]
+        name:
+          type: string
+          examples: [Troop 3346 All Saints Lutheran Church]
+        number:
+          type: string
+          pattern: "^[0-9]+$"
+          examples: ["3346"]
+        onlineRegistrationSupported:
+          type: boolean
+        program:
+          $ref: "#/components/schemas/OrganizationProgram"
+        zip:
+          type: string
+          description: >-
+            5 digits, without any ZIP+4. A leading zero may be missing, as in
+            `3055` for `03055`.
+          pattern: "^[0-9]{4,5}$"
+          examples: ["55345", "3055"]
 
     Problem:
       type: object
@@ -481,6 +687,20 @@ components:
           type: string
           description: Matches the `X-Correlation-ID` response header
           examples: [a3425ac2-8b5b-4568-baeb-04aee4288ca3]
+        violations:
+          type: array
+          description: One entry per invalid request body field
+          items:
+            type: object
+            additionalProperties: false
+            required: [field, message]
+            properties:
+              field:
+                type: string
+                examples: [zip]
+              message:
+                type: string
+                examples: [must be a 5-digit ZIP code]
 
     ZipCode:
       type: string
