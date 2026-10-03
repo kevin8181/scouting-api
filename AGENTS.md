@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This repo holds unofficial OpenAPI descriptions of APIs we don't control. The live APIs are the source of truth: each spec records what its API actually does, observed by calling it.
 

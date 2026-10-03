@@ -83,7 +83,7 @@ The same URL works for importing into Postman, Insomnia, Bruno, or any OpenAPI c
 
 ## Contributing
 
-Issues and pull requests are welcome, whether it's a missing endpoint, a field that's wrong, or a quirk worth noting. The full workflow for adding an endpoint, and the rules every spec follows, are in [`CLAUDE.md`](CLAUDE.md). It's written for AI coding agents, and it reads fine for humans too.
+Issues and pull requests are welcome, whether it's a missing endpoint, a field that's wrong, or a quirk worth noting. The full workflow for adding an endpoint, and the rules every spec follows, are in [`AGENTS.md`](AGENTS.md). It's written for AI coding agents, and it reads fine for humans too.
 
 ### Setup
 
